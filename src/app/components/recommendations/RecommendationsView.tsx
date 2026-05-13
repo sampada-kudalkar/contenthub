@@ -2,14 +2,14 @@ import { useState, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import {
-  Search, MoreVertical, MapPin, CircleCheck, CircleX,
+  MoreVertical, CircleCheck, CircleX,
   ChevronDown,
 } from 'lucide-react'
 import { createColumnHelper } from '@tanstack/react-table'
 import { APP_MAIN_CONTENT_SHELL_CLASS } from '@/app/components/layout/appShellClasses'
 import { Button } from '@/app/components/ui/button'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu'
 import { AppDataTable } from '@/app/components/ui/AppDataTable'
-import { AppDataTableColumnSettingsTrigger } from '@/app/components/ui/AppDataTableColumnSettingsTrigger'
 import { useRecStore } from './useRecStore'
 import { RecDetailView } from './RecDetailView'
 import { FilterPane, FilterPaneTriggerButton } from '@/app/components/FilterPane'
@@ -67,10 +67,10 @@ interface RecommendationsViewProps {
 // ── Filter config ─────────────────────────────────────────────────────────────
 
 const REC_FILTER_ITEMS: FilterItem[] = [
+  { id: 'location', label: 'Location', options: ['Dubbo NSW', 'Sydney NSW', 'Melbourne VIC', 'Brisbane QLD', 'Perth WA', 'Adelaide SA', 'Gold Coast QLD', 'Canberra ACT'] },
   { id: 'type',     label: 'Type',     options: ['Local SEO', 'Blog', 'FAQs', 'Conversion', 'Website content', 'Website improvement', 'Reviews', 'Social', 'Trust & Reputation', 'Technical SEO'] },
-  { id: 'impact',   label: 'Impact',   options: ['Quick win', 'Medium', 'Bigger lift'] },
-  { id: 'theme',    label: 'Theme',    options: ['Visibility', 'Citations', 'Sentiment', 'Engagement'] },
-  { id: 'location', label: 'Location', options: ['All locations', '1 location', '2-5 locations', '5+ locations'] },
+  { id: 'theme',    label: 'Themes',   options: ['Visibility', 'Citations', 'Sentiment', 'Engagement', 'Local Presence'] },
+  { id: 'team',     label: 'Team',     options: ['Unassigned', 'My team', 'External agency'] },
 ]
 
 const TYPE_DISPLAY_TO_CATEGORY: Record<string, RecCategory> = {
@@ -87,12 +87,9 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
     rejectRec, acceptRec, completeRec,
   } = store
 
-  const [selectedRecId,      setSelectedRecId]      = useState<string | null>(initialRecId ?? null)
-  const [searchQuery,        setSearchQuery]        = useState('')
-  const [showSearch,         setShowSearch]         = useState(false)
-  const [columnSheetOpen,    setColumnSheetOpen]    = useState(false)
-  const [filterPanelOpen,    setFilterPanelOpen]    = useState(false)
-  const [filterItems,        setFilterItems]        = useState<FilterItem[]>(REC_FILTER_ITEMS)
+  const [selectedRecId,   setSelectedRecId]   = useState<string | null>(initialRecId ?? null)
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false)
+  const [filterItems,     setFilterItems]     = useState<FilterItem[]>(REC_FILTER_ITEMS)
 
   // Location popover
   const [showLocPopover,  setShowLocPopover]  = useState(false)
@@ -117,12 +114,6 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       const cat = (TYPE_DISPLAY_TO_CATEGORY[typeFilter] ?? typeFilter) as RecCategory
       if (r.category !== cat) return false
     }
-    const impactFilter = filterItems.find(f => f.id === 'impact')?.value
-    if (impactFilter && r.effort !== impactFilter) return false
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase()
-      if (!r.title.toLowerCase().includes(q) && !r.description.toLowerCase().includes(q)) return false
-    }
     return true
   })
 
@@ -143,7 +134,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       id: 'recommendation',
       header: 'Recommendations',
       meta: { settingsLabel: 'Recommendations' },
-      size: 280,
+      size: 25,
       sortingFn: 'alphanumeric',
       cell: ({ row }) => (
         <p className="text-[14px] text-foreground leading-[22px] font-normal group-hover/table-row:text-primary transition-colors pr-4 whitespace-normal">
@@ -155,7 +146,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       id: 'type',
       header: 'Type',
       meta: { settingsLabel: 'Type' },
-      size: 140,
+      size: 10,
       sortingFn: 'alphanumeric',
       cell: ({ row }) => {
         const CATEGORY_DISPLAY: Partial<Record<string, string>> = {
@@ -174,16 +165,19 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       id: 'impact',
       header: 'Impact',
       meta: { settingsLabel: 'Impact' },
-      size: 360,
+      size: 45,
       sortingFn: 'basic',
       cell: ({ row }) => (
         <div className="flex items-start gap-2 pr-4">
-          {row.original.effort === 'Quick win' && (
-            <img src="/assets/rec/electric_bolt.svg" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          )}
-          {row.original.effort === 'Bigger lift' && (
-            <img src="/assets/rec/lead.svg" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
-          )}
+          {/* Always reserve 16px for icon so text aligns regardless of effort level */}
+          <div className="w-4 h-4 flex-shrink-0 mt-0.5">
+            {row.original.effort === 'Quick win' && (
+              <img src="/assets/rec/electric_bolt.svg" alt="" className="w-4 h-4" />
+            )}
+            {row.original.effort === 'Bigger lift' && (
+              <img src="/assets/rec/lead.svg" alt="" className="w-4 h-4" />
+            )}
+          </div>
           <p className="text-[14px] text-foreground leading-[22px] font-normal line-clamp-3 whitespace-normal">
             {row.original.description}
           </p>
@@ -197,7 +191,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       id: 'youVsCompetitor',
       header: 'You vs competitor',
       meta: { settingsLabel: 'You vs competitor' },
-      size: 220,
+      size: 10,
       sortingFn: 'basic',
       cell: ({ row }) => {
         const rec = row.original
@@ -227,7 +221,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       id: 'locations',
       header: 'Locations',
       meta: { settingsLabel: 'Locations' },
-      size: 140,
+      size: 10,
       enableResizing: false,
       sortingFn: 'basic',
       cell: ({ row }) => {
@@ -235,15 +229,12 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
         const locationCount = rec.locations ?? 1
         return (
           <div
-            className="flex items-center gap-1.5 h-[32px]"
+            className="flex items-center justify-between h-full w-full"
             onClick={e => e.stopPropagation()}
           >
-            <div className="w-6 flex-shrink-0">
-              <span className="text-[14px] text-foreground leading-[22px]">
-                {locationCount}
-              </span>
-            </div>
-            <div className="flex items-center gap-0.5 opacity-0 group-hover/table-row:opacity-100 transition-opacity duration-150 pointer-events-none group-hover/table-row:pointer-events-auto">
+            {/* Count + chevron */}
+            <div className="flex items-center gap-1">
+              <span className="text-[14px] text-foreground leading-[22px]">{locationCount}</span>
               <button
                 ref={el => { chevronRefs.current[rec.id] = el }}
                 className="flex items-center justify-center w-8 h-8 hover:bg-muted rounded transition-colors"
@@ -253,16 +244,19 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
               >
                 <ChevronDown size={14} strokeWidth={2} className="text-foreground" />
               </button>
+            </div>
+            {/* CTA buttons — right-aligned, 40px from column right edge, 8px gap, 36×36px */}
+            <div className="flex items-center gap-2 pr-10 opacity-0 group-hover/table-row:opacity-100 transition-opacity duration-150 pointer-events-none group-hover/table-row:pointer-events-auto flex-shrink-0">
               <button
                 title="Reject"
-                className="flex items-center justify-center w-8 h-8 hover:bg-muted rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center justify-center w-9 h-9 hover:bg-muted rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
                 onClick={e => { e.stopPropagation(); rejectRec(rec.id) }}
               >
                 <CircleX size={18} strokeWidth={1.6} absoluteStrokeWidth />
               </button>
               <button
                 title="Accept"
-                className="flex items-center justify-center w-8 h-8 hover:bg-muted rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center justify-center w-9 h-9 hover:bg-muted rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
                 onClick={e => { e.stopPropagation(); acceptRec(rec.id, 'self') }}
               >
                 <CircleCheck size={18} strokeWidth={1.6} absoluteStrokeWidth />
@@ -332,45 +326,17 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
             </div>
 
             <div className="flex items-center gap-1 flex-shrink-0">
-              {showSearch && (
-                <div className="flex items-center gap-1.5 bg-muted/50 border border-border rounded px-2.5 py-1.5 mr-1">
-                  <Search size={13} strokeWidth={1.6} absoluteStrokeWidth className="text-muted-foreground flex-shrink-0" />
-                  <input
-                    autoFocus
-                    type="text"
-                    placeholder="Search recommendations…"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    onBlur={() => { if (!searchQuery) setShowSearch(false) }}
-                    className="w-[200px] bg-transparent text-[13px] text-foreground placeholder:text-muted-foreground outline-none leading-[20px]"
-                  />
-                </div>
-              )}
-
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label="Search recommendations"
-                onClick={() => setShowSearch(s => !s)}
-                className={cn((showSearch || searchQuery) && 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/15 hover:text-primary')}
-              >
-                <Search className="size-4" strokeWidth={1.6} absoluteStrokeWidth aria-hidden />
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label="More options"
-              >
-                <MoreVertical className="size-4" strokeWidth={1.6} absoluteStrokeWidth aria-hidden />
-              </Button>
-
-              <AppDataTableColumnSettingsTrigger
-                sheetTitle="Recommendation columns"
-                onClick={() => setColumnSheetOpen(true)}
-              />
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button type="button" variant="outline" size="icon" aria-label="More options">
+                    <MoreVertical className="size-4" strokeWidth={1.6} absoluteStrokeWidth aria-hidden />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem>Download</DropdownMenuItem>
+                  <DropdownMenuItem>Email</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
 
               <FilterPaneTriggerButton open={filterPanelOpen} onOpenChange={setFilterPanelOpen} />
             </div>
@@ -424,13 +390,10 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
                   initialSorting={[{ id: 'impact', desc: false }]}
                   getRowId={r => r.id}
                   onRowClick={rec => setSelectedRecId(rec.id)}
-                  columnSheetTitle="Recommendation columns"
-                  hideColumnsButton
-                  columnSheetOpen={columnSheetOpen}
-                  onColumnSheetOpenChange={setColumnSheetOpen}
                   scrollableBody={false}
                   rowDensity="default"
                   stickyFirstColumn={false}
+                  fillWidth={true}
                 />
               </div>
             )}
@@ -461,8 +424,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
           </p>
           <ul className="max-h-52 overflow-y-auto">
             {popoverLocs.map(loc => (
-              <li key={loc} className="flex items-center gap-2 px-3 py-1.5 hover:bg-muted/50">
-                <MapPin size={12} strokeWidth={1.6} absoluteStrokeWidth className="text-muted-foreground flex-shrink-0" />
+              <li key={loc} className="px-3 py-1.5 hover:bg-muted/50">
                 <span className="text-[13px] text-foreground leading-[18px]">{loc}</span>
               </li>
             ))}

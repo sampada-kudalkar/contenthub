@@ -163,6 +163,12 @@ export interface AppDataTableProps<TData> {
    * @default "medium"
    */
   rowDensity?: AppDataTableRowDensity;
+  /**
+   * When true, the table fills 100% of its container and column `size` values are treated as
+   * proportional weights (percentage of the container) rather than fixed pixel widths.
+   * Use when columns must resize as the container narrows (e.g. when a filter panel opens).
+   */
+  fillWidth?: boolean;
 }
 
 export function AppDataTable<TData>({
@@ -187,6 +193,7 @@ export function AppDataTable<TData>({
   stickyToolbar = false,
   scrollableBody = false,
   rowDensity = "medium",
+  fillWidth = false,
 }: AppDataTableProps<TData>) {
   const densityCell = APP_DATA_TABLE_DENSITY_CELL[rowDensity];
   const densityHead = APP_DATA_TABLE_DENSITY_HEAD[rowDensity];
@@ -482,7 +489,7 @@ export function AppDataTable<TData>({
             "table-fixed w-full text-[length:var(--font-size)] leading-normal",
             effectiveStickyCount > 0 && "isolate",
           )}
-          style={{ width: tableWidthPx, minWidth: tableMinWidthPx }}
+          style={fillWidth ? { width: '100%' } : { width: tableWidthPx, minWidth: tableMinWidthPx }}
         >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -514,7 +521,7 @@ export function AppDataTable<TData>({
                           ),
                       )}
                       style={{
-                        width: header.getSize(),
+                        width: fillWidth ? `${(header.getSize() / columnTotalPx) * 100}%` : header.getSize(),
                         ...(isStickyLeader
                           ? {
                               left: stickyLeftPx,
@@ -627,7 +634,7 @@ export function AppDataTable<TData>({
                           ),
                       )}
                       style={{
-                        width: cell.column.getSize(),
+                        width: fillWidth ? `${(cell.column.getSize() / columnTotalPx) * 100}%` : cell.column.getSize(),
                         ...(isStickyLeader
                           ? {
                               left: stickyLeftPx,
