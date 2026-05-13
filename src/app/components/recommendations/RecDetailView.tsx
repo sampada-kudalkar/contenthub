@@ -1149,7 +1149,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
 
   return (
     <div className="bg-background border border-border rounded-xl overflow-hidden">
-      <div className="p-4">
+      <div className="px-5 pt-4 pb-2">
         <p className="text-[14px] font-semibold text-foreground leading-[22px]">
           Which top competitor blogs are cited by AI for &lsquo;{query}&rsquo;
         </p>
@@ -1159,17 +1159,17 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
       </div>
 
       {/* Competitor rows */}
-      <div className="p-4 pt-0 space-y-4">
+      <div className="px-6 pb-4 flex flex-col gap-3">
         {competitors.map(comp => {
           const initial = comp.name.charAt(0).toUpperCase()
           const badge = getBadgeStyle(initial)
           return (
-            <div key={comp.id} className="rounded-lg bg-[var(--s-bg-secondary)] p-4">
+            <div key={comp.id} className="rounded-lg bg-[var(--s-bg-secondary)] p-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex flex-col gap-1 flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span
-                      className="w-6 h-6 rounded flex items-center justify-center text-[11px] font-bold flex-shrink-0"
+                      className="w-5 h-5 rounded flex items-center justify-center text-[11px] font-bold flex-shrink-0"
                       style={{ backgroundColor: badge.bg, color: badge.color }}
                     >
                       {initial}
@@ -1199,7 +1199,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
           <button
             type="button"
             onClick={() => setCompareOpen(v => !v)}
-            className="w-full flex items-start justify-between p-4 hover:bg-[var(--s-bg-secondary)] transition-colors text-left"
+            className="w-full flex items-start justify-between px-5 py-4 hover:bg-[var(--s-bg-secondary)] transition-colors text-left"
           >
             <div>
               <p className="text-[13px] font-medium text-foreground leading-[20px]">
@@ -1216,9 +1216,9 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
           </button>
 
           {compareOpen && (
-            <div className="overflow-x-auto">
-              {/* Column header row */}
-              <div className="flex items-center px-5 py-3 border-t border-border">
+            <div className="overflow-x-auto px-5">
+              {/* Column header row — div 2 wrapper owns the px-5 inset */}
+              <div className="flex items-center py-4 border-t border-border">
                 <div className="w-[38%] flex-shrink-0">
                   <span className="text-[12px] text-muted-foreground">Score</span>
                 </div>
@@ -1228,7 +1228,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                 </div>
                 {competitors.map(comp => (
                   <div key={comp.id} className="flex-1 min-w-0 flex items-center gap-1.5">
-                    <span className="text-[12px] text-foreground leading-none">{comp.name}</span>
+                    <span className="text-[12px] text-muted-foreground leading-none">{comp.name}</span>
                     <Info size={13} strokeWidth={1.6} absoluteStrokeWidth className="text-muted-foreground flex-shrink-0" />
                   </div>
                 ))}
@@ -1239,7 +1239,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                 <button
                   type="button"
                   onClick={() => setSubScoresOpen(v => !v)}
-                  className="w-full flex items-center px-5 py-4 hover:bg-muted/20 transition-colors text-left"
+                  className="w-full flex items-center py-4 hover:bg-muted/20 transition-colors text-left"
                 >
                   <div className="w-[38%] flex-shrink-0 flex items-center gap-2">
                     <ChevronDown
@@ -1262,7 +1262,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
 
                 {/* Sub-score rows */}
                 {subScoresOpen && subScores.map(sub => (
-                  <div key={sub.name} className="flex items-center px-5 py-3.5 border-t border-border">
+                  <div key={sub.name} className="flex items-center py-4 border-t border-border">
                     <div className="w-[38%] flex-shrink-0 pl-6">
                       <p className="text-[13px] text-foreground leading-[18px]">{sub.name}</p>
                       <p className="text-[11px] text-muted-foreground leading-[16px]">
@@ -1311,7 +1311,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
       </div>
 
       {/* Platform tabs */}
-      <div className="flex border-b border-border px-2">
+      <div className="flex border-b border-border px-5">
         {LLM_EVIDENCE_PLATFORMS.map(platform => (
           <button
             key={platform}
@@ -1329,10 +1329,10 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
         ))}
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto mt-2">
+      {/* Table — div 2 wrapper owns the px-5 inset from card edges */}
+      <div className="overflow-x-auto px-5">
         {/* Header row */}
-        <div className="flex items-center px-5 py-3 border-b border-border">
+        <div className="flex items-center py-4 border-b border-border">
           <span className="text-[12px] text-muted-foreground font-medium w-[110px] flex-shrink-0">Date</span>
           <span className="text-[12px] text-muted-foreground font-medium w-[130px] flex-shrink-0">Location</span>
           <span className="text-[12px] text-muted-foreground font-medium w-[90px] flex-shrink-0 flex items-center gap-1">
@@ -1348,7 +1348,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
         {MOCK_LLM_ROWS.map((row, i) => (
           <div
             key={i}
-            className={cn('flex items-center px-5 py-5', i > 0 && 'border-t border-border')}
+            className={cn('flex items-center py-6', i > 0 && 'border-t border-border')}
           >
             {/* Date */}
             <span className="text-[13px] text-foreground w-[110px] flex-shrink-0">{row.date}</span>
