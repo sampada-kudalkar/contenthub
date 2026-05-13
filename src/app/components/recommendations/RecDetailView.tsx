@@ -1325,8 +1325,8 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
       </div>
 
       {/* Platform tabs */}
-      {/* Same tab component as Recommendation/Evidence tabs */}
-      <div className="flex border-b border-border px-5 gap-6">
+      {/* Same tab component as Recommendation/Evidence tabs — no border-b on container */}
+      <div className="flex px-5 gap-6">
         {LLM_EVIDENCE_PLATFORMS.map(platform => (
           <button
             key={platform}
