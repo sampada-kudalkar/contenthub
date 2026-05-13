@@ -178,7 +178,7 @@ function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas, stat
           <span className="text-[16px] text-foreground font-normal leading-[24px]">Preview blog</span>
           <div className="flex items-center gap-3">
             <Button size="sm" onClick={onNavigateToBlogCanvas ?? onAccept} className="h-9 px-4 text-[14px]">
-              {status === 'accepted' ? 'Edit blog' : 'Accept and edit blog'}
+              {(status === 'accepted' || status === 'in_progress') ? 'Edit blog' : 'Accept and edit blog'}
             </Button>
             <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors">
               <X size={16} strokeWidth={2} className="text-muted-foreground" />
@@ -551,7 +551,11 @@ interface BlogPreviewBoxProps {
 
 function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBoxProps) {
   return (
-    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
+    <div
+      className="flex items-start gap-3 rounded-lg p-3 cursor-pointer"
+      style={{ background: '#f9f7fd' }}
+      onClick={onOpenClick}
+    >
       <img
         src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=120&h=120&fit=crop&crop=center&q=80"
         alt=""
@@ -563,12 +567,15 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
           <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
         <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{rec.title}</p>
-        <p className="text-[12px] text-muted-foreground leading-[18px] truncate">
-          {rec.description}{' '}
+        <p className="text-[12px] text-muted-foreground leading-[18px] flex items-baseline gap-1 min-w-0">
+          <span className="truncate">{rec.description}</span>
           {onOpenClick && (
-            <button onClick={onOpenClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+            <span
+              className="text-primary hover:underline font-normal whitespace-nowrap shrink-0 cursor-pointer"
+              onClick={(e: MouseEvent) => { e.stopPropagation(); onOpenClick(); }}
+            >
               View blog
-            </button>
+            </span>
           )}
         </p>
       </div>
@@ -693,7 +700,7 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
   const aeoScore = rec.aeoScore?.you ?? 92
   const topComp = rec.competitors[0]
 
-  const isRejectedOrCompleted = rec.status === 'rejected' || rec.status === 'completed'
+  const isRejectedOrCompleted = rec.status === 'rejected' || rec.status === 'completed' || rec.status === 'in_progress'
 
   const steps: Step[] = [
     {
@@ -704,7 +711,7 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
         : { label: 'Review blog', onClick: () => setShowBlogPreview(true) },
     },
     {
-      label: rec.status === 'accepted' || rec.status === 'completed'
+      label: rec.status === 'accepted' || rec.status === 'completed' || rec.status === 'in_progress'
         ? 'Publish to your website'
         : 'Accept and publish to your website',
       description: 'Publish to your website to boost Search AI score',
