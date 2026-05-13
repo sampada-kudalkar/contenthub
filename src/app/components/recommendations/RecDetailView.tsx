@@ -580,28 +580,30 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
         <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
       </div>
 
-      <div className="relative mt-1" style={{ height: 40 }}>
-        <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: 0 }}>{current.toFixed(1)}%</p>
-        <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: `${compW}%` }}>{compPct.toFixed(1)}%</p>
-      </div>
-      <div className="flex items-center gap-4 mt-2">
-        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-          Current score
-        </span>
-        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#e53935' }} />
-          Competitor average
-        </span>
+      {/* Scores — 40px gap, both left-aligned, legend dot paired below each number */}
+      <div className="flex items-start gap-10 mt-2">
+        <div className="flex flex-col gap-1">
+          <p className="text-[32px] font-normal text-foreground leading-[48px] tracking-[-0.64px]">{current.toFixed(1)}%</p>
+          <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+            Current score
+          </span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-[32px] font-normal text-foreground leading-[48px] tracking-[-0.64px]">{compPct.toFixed(1)}%</p>
+          <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-destructive flex-shrink-0" />
+            Competitor average
+          </span>
+        </div>
       </div>
 
-      <div className="relative h-1.5 bg-muted rounded-full">
+      {/* Progress bar — blue (your score) then red (competitor gap) then gray track */}
+      <div className="relative h-[6px] bg-muted rounded-full">
+        <div className="absolute left-0 top-0 h-full bg-destructive rounded-full" style={{ width: `${compW}%` }} />
         <div className="absolute left-0 top-0 h-full bg-primary rounded-full" style={{ width: `${yourW}%` }} />
-        {compW > yourW && (
-          <div className="absolute top-0 h-full rounded-full" style={{ background: '#F99E8F', left: `${yourW}%`, width: `${compW - yourW}%` }} />
-        )}
-        <div className="absolute top-1/2 w-2 h-2 bg-primary rounded-full border-2 border-background shadow-sm" style={{ left: `${yourW}%`, transform: 'translate(-50%, -50%)' }} />
-        <div className="absolute top-1/2 w-2 h-2 rounded-full border-2 border-background shadow-sm" style={{ background: '#e53935', left: `${compW}%`, transform: 'translate(-50%, -50%)' }} />
+        <div className="absolute top-1/2 w-[9px] h-[9px] bg-primary rounded-full border-2 border-background shadow-sm" style={{ left: `${yourW}%`, transform: 'translate(-50%, -50%)' }} />
+        <div className="absolute top-1/2 w-3 h-3 bg-destructive rounded-full border-2 border-background shadow-sm" style={{ left: `${compW}%`, transform: 'translate(-50%, -50%)' }} />
       </div>
     </div>
   )
@@ -833,15 +835,15 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
 
       {/* Blog preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-4 pb-1">
+        <div className="px-5 pt-4 pb-4 flex flex-col">
           <div className="flex flex-col gap-1">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
             <p className="text-[16px] text-foreground font-normal leading-[24px]">{rec.title}</p>
           </div>
-        </div>
-        <div className="px-5 py-3 flex flex-col gap-2">
-          <p className="text-[14px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
-          <BlogPreviewBox rec={rec} aeoScore={aeoScore} onOpenClick={() => setShowBlogPreview(true)} onAccept={onNavigateToBlogCanvas ?? onAccept} />
+          <p className="text-[14px] text-muted-foreground font-normal leading-[20px] mt-1">{rec.description}</p>
+          <div className="mt-3">
+            <BlogPreviewBox rec={rec} aeoScore={aeoScore} onOpenClick={() => setShowBlogPreview(true)} onAccept={onNavigateToBlogCanvas ?? onAccept} />
+          </div>
         </div>
       </div>
 
@@ -855,35 +857,6 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
         <NeedHelpBanner />
       </div>
 
-      {/* Competitor section */}
-      {topComp && (
-        <div className="bg-background border border-border rounded-lg">
-          <div className="px-5 pt-4 pb-2">
-            <p className="text-[16px] text-foreground font-normal leading-[24px]">
-              What top competitor blog is cited by AI
-            </p>
-          </div>
-          <div className="px-4 pb-4">
-            <div className="bg-muted/50 rounded-lg p-4 flex items-start justify-between gap-4">
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-5 h-5 rounded-full bg-destructive flex items-center justify-center text-background text-[10px] font-bold flex-shrink-0">
-                    {topComp.name.charAt(0)}
-                  </span>
-                  <span className="text-[12px] text-foreground leading-[18px]">{topComp.name}</span>
-                </div>
-                {topComp.pageUrl && (
-                  <a href={topComp.pageUrl} target="_blank" rel="noopener noreferrer" className="text-[14px] text-primary hover:underline leading-[20px]">
-                    {topComp.name} | Best result
-                  </a>
-                )}
-                <p className="text-[14px] text-foreground leading-[20px] truncate">{topComp.llmSnippet}</p>
-              </div>
-              <AeoScoreBox score={rec.aeoScore?.competitor ?? 85} />
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
@@ -943,19 +916,19 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
 
       {/* FAQ preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-4 pb-1">
+        <div className="px-5 pt-4 pb-4 flex flex-col">
           <div className="flex flex-col gap-1">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
             <p className="text-[16px] text-foreground font-normal leading-[24px]">{rec.title}</p>
           </div>
-        </div>
-        <div className="px-5 py-3 flex flex-col gap-2">
-          <p className="text-[14px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
-          <FAQPreviewBox
-            rec={rec}
-            onPreviewClick={() => setShowFAQPreview(true)}
-            onNavigateToContentHub={onNavigateToContentHub}
-          />
+          <p className="text-[14px] text-muted-foreground font-normal leading-[20px] mt-1">{rec.description}</p>
+          <div className="mt-3">
+            <FAQPreviewBox
+              rec={rec}
+              onPreviewClick={() => setShowFAQPreview(true)}
+              onNavigateToContentHub={onNavigateToContentHub}
+            />
+          </div>
         </div>
       </div>
 
