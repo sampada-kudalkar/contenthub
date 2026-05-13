@@ -69,6 +69,8 @@ function suppressElementalGlobalResetPlugin(): Plugin {
 }
 
 export default defineConfig({
+  // Base path for GitHub Pages: https://sampada-kudalkar.github.io/contenthub/
+  base: '/contenthub/',
   // Use /tmp for vite's dep cache — avoids EPERM issues on macOS FUSE mounts
   cacheDir: '/tmp/vite-birdeyev2',
   plugins: [
