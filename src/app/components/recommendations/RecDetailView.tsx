@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, Sparkles, X, Copy, Check, ChevronDown, ChevronUp, CheckCircle2, Info, MoreVertical } from 'lucide-react'
@@ -23,13 +23,15 @@ function getMetricForCategory(category: string): { label: string; key: MetricsKe
 
 // ── Default AEO sub-scores (fallback when not in data) ────────────────────────
 
+// Weighted sums: You = 89×10.2+94×16.3+91×8.5+90×30.5+96×11.5+93×22.9 ≈ 92
+//                Comp = 77×10.2+79×16.3+85×8.5+82×30.5+82×11.5+82×22.9 ≈ 81
 const DEFAULT_BLOG_SUBSCORES: AeoSubScore[] = [
-  { name: 'Readability',          weight: 10.2, you: 85, competitor: 78, delta: 7  },
-  { name: 'Content freshness',    weight: 16.3, you: 90, competitor: 82, delta: 8  },
-  { name: 'Click-through structure', weight: 8.5, you: 93, competitor: 80, delta: 13 },
-  { name: 'Information density',  weight: 30.5, you: 84, competitor: 76, delta: 8  },
-  { name: 'Machine readability',  weight: 11.5, you: 87, competitor: 88, delta: -1 },
-  { name: 'Answerability signals',weight: 22.9, you: 88, competitor: 83, delta: 5  },
+  { name: 'Readability',             weight: 10.2, you: 89, competitor: 77, delta: 12 },
+  { name: 'Content freshness',       weight: 16.3, you: 94, competitor: 79, delta: 15 },
+  { name: 'Click-through structure', weight: 8.5,  you: 91, competitor: 85, delta:  6 },
+  { name: 'Information density',     weight: 30.5, you: 90, competitor: 82, delta:  8 },
+  { name: 'Machine readability',     weight: 11.5, you: 96, competitor: 82, delta: 14 },
+  { name: 'Answerability signals',   weight: 22.9, you: 93, competitor: 82, delta: 11 },
 ]
 
 const DEFAULT_FAQ_SUBSCORES: AeoSubScore[] = [
@@ -1044,7 +1046,38 @@ function getBadgeStyle(initial: string): { bg: string; color: string } {
   return PALETTES[initial.toUpperCase().charCodeAt(0) % PALETTES.length]
 }
 
-function AvatarStack({ items, overflow }: { items: { initial: string; color: string }[]; overflow: number }) {
+// ── Site name map for mentions popover ───────────────────────────────────────
+
+const MENTIONS_SITE_NAMES: Record<string, string> = {
+  Z: 'Zillow', R: 'Realtor.com', T: 'Trulia', H: 'Homes.com',
+  L: 'LoopNet', C: 'CoStar', B: 'Berkshire Hathaway', M: 'Movoto',
+  D: 'Domain.com.au', N: 'Nearmap', A: 'Allhomes', P: 'PropertyGuru',
+  S: 'Seek Real Estate', W: 'RealEstate.com.au', E: 'Estate Agents',
+  F: 'First Home Buyer', G: 'Gumtree Property', I: 'Invest Smart',
+  J: 'Just Listed', K: 'Keysite Realty', O: 'OneRoof', V: 'View.com.au',
+}
+
+// Extra site initials for overflow rows (consistent across data rows)
+const OVERFLOW_EXTRAS = ['D', 'N', 'A', 'P', 'S', 'W', 'E', 'F', 'G', 'I', 'J', 'K', 'O', 'V', 'B', 'M', 'C']
+
+function MentionsWithPopover({ items, overflow }: { items: { initial: string; color: string }[]; overflow: number }) {
+  const [showPopover, setShowPopover] = useState(false)
+  const [popoverPos, setPopoverPos] = useState({ top: 0, left: 0 })
+  const overflowRef = useRef<HTMLSpanElement | null>(null)
+
+  function handleOverflowEnter() {
+    if (!overflowRef.current) return
+    const rect = overflowRef.current.getBoundingClientRect()
+    setPopoverPos({ top: rect.bottom + 6, left: rect.left - 80 })
+    setShowPopover(true)
+  }
+
+  // All site names: visible items + overflow extras
+  const allNames = [
+    ...items.map(a => MENTIONS_SITE_NAMES[a.initial] ?? a.initial),
+    ...OVERFLOW_EXTRAS.slice(0, overflow).map(k => MENTIONS_SITE_NAMES[k] ?? k),
+  ]
+
   return (
     <div className="flex items-center gap-1.5">
       <div className="flex -space-x-1.5">
@@ -1059,7 +1092,34 @@ function AvatarStack({ items, overflow }: { items: { initial: string; color: str
         ))}
       </div>
       {overflow > 0 && (
-        <span className="text-[12px] text-muted-foreground">+{overflow}</span>
+        <span
+          ref={overflowRef}
+          className="text-[12px] text-muted-foreground cursor-pointer hover:text-foreground transition-colors"
+          onMouseEnter={handleOverflowEnter}
+          onMouseLeave={() => setTimeout(() => setShowPopover(false), 200)}
+        >
+          +{overflow}
+        </span>
+      )}
+      {showPopover && createPortal(
+        <div
+          className="fixed z-[9999] bg-background rounded-lg shadow-lg border border-border w-56 py-2"
+          style={{ top: popoverPos.top, left: popoverPos.left }}
+          onMouseEnter={() => setShowPopover(true)}
+          onMouseLeave={() => setShowPopover(false)}
+        >
+          <p className="px-3 pt-1 pb-2 text-[11px] text-muted-foreground font-medium tracking-[0.4px] uppercase">
+            All mentions ({allNames.length})
+          </p>
+          <ul className="max-h-52 overflow-y-auto">
+            {allNames.map((name, i) => (
+              <li key={i} className="px-3 py-1.5 hover:bg-muted/50">
+                <span className="text-[13px] text-foreground leading-[18px]">{name}</span>
+              </li>
+            ))}
+          </ul>
+        </div>,
+        document.body,
       )}
     </div>
   )
@@ -1069,21 +1129,21 @@ function AvatarStack({ items, overflow }: { items: { initial: string; color: str
 
 const MOCK_EVIDENCE_COMPETITORS: Recommendation['competitors'] = [
   {
-    id: 'bowery', name: 'Bowery',
-    pageUrl: '#',
-    llmSnippet: 'Bowery maintains dedicated suburb service pages for key Dubbo areas including Dubbo South, Delroy Park, and Whylandra, consistently appearing in AI answers for suburb-specific real estate searches.',
+    id: 'aspect', name: 'Aspect Property Consultant',
+    pageUrl: 'https://aspectpropertyconsultant.com.au',
+    llmSnippet: "Aspect Property Consultant's appraisal hub clearly communicates their \"no obligation, no cost\" value promise with a simple form above the fold, capturing more leads from Dubbo property owners searching for valuations.",
     citedBy: [], totalCitations: 120, citationRank: 1, sourceGaps: [], whyTheyWin: '',
   },
   {
     id: 'ray-white', name: 'Ray White Dubbo',
-    pageUrl: '#',
-    llmSnippet: "Ray White Dubbo's suburb profile pages include median sale prices, days-on-market data, and local agent bios — making them the primary source Perplexity and Gemini cite for suburb-level property queries in Dubbo.",
+    pageUrl: 'https://raywhitedubbo.com.au',
+    llmSnippet: "Ray White Dubbo has a dedicated property appraisal page that answers the top questions AI surfaces for Dubbo sellers — including what a free appraisal covers, timelines, and what to expect from the process.",
     citedBy: [], totalCitations: 98, citationRank: 2, sourceGaps: [], whyTheyWin: '',
   },
   {
-    id: 'mcgrath', name: 'McGrath Dubbo',
-    pageUrl: '#',
-    llmSnippet: 'McGrath Dubbo has suburb-specific pages targeting rural and lifestyle property seekers in surrounding areas like Narromine and Trangie, frequently cited by ChatGPT for rural Dubbo suburb searches.',
+    id: 'elders', name: 'Elders Real Estate Dubbo',
+    pageUrl: 'https://eldersrealestate.com.au/dubbo',
+    llmSnippet: "Elders Real Estate Dubbo prominently features their free appraisal offer across their website, with suburb-specific landing pages that Gemini surfaces when homeowners ask about property values in the Dubbo area.",
     citedBy: [], totalCitations: 87, citationRank: 3, sourceGaps: [], whyTheyWin: '',
   },
 ]
@@ -1093,7 +1153,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
   const [subScoresOpen, setSubScoresOpen] = useState(true)
   const rawCompetitors = rec.competitors.length > 0 ? rec.competitors : MOCK_EVIDENCE_COMPETITORS
   const competitors = rawCompetitors.slice(0, 3)
-  const aeoCompScore = rec.aeoScore?.competitor ?? 79
+  const aeoCompScore = rec.aeoScore?.competitor ?? 81
   const aeoYourScore = rec.aeoScore?.you ?? 92
   const subScores = rec.aeoScore?.subScores ?? DEFAULT_BLOG_SUBSCORES
 
@@ -1128,7 +1188,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                     >
                       {initial}
                     </span>
-                    <span className="text-[12px] text-primary font-normal leading-none">{comp.name}</span>
+                    <span className="text-[12px] font-normal leading-none" style={{ color: '#717182' }}>{comp.name}</span>
                   </div>
                   {comp.pageUrl && (
                     <a
@@ -1140,7 +1200,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                       {comp.name} | Leading agency in Dubbo
                     </a>
                   )}
-                  <p className="text-[13px] text-foreground leading-[20px] line-clamp-1">{comp.llmSnippet}</p>
+                  <p className="text-[13px] leading-[20px] line-clamp-1" style={{ color: '#717182' }}>{comp.llmSnippet}</p>
                 </div>
                 <AeoScoreBox score={aeoCompScore} />
               </div>
@@ -1265,17 +1325,18 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
       </div>
 
       {/* Platform tabs */}
-      <div className="flex px-5">
+      {/* Same tab component as Recommendation/Evidence tabs */}
+      <div className="flex border-b border-border px-5 gap-6">
         {LLM_EVIDENCE_PLATFORMS.map(platform => (
           <button
             key={platform}
             type="button"
             onClick={() => setActivePlatform(platform)}
             className={cn(
-              'px-3 py-3 text-[13px] leading-none relative whitespace-nowrap',
+              'py-3 text-[14px] font-normal border-b-2 -mb-px transition-colors whitespace-nowrap',
               activePlatform === platform
-                ? 'text-foreground font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-primary after:rounded-t'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
             {platform}
@@ -1294,8 +1355,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
             <span className="w-3.5 h-3.5 rounded-full border border-muted-foreground/50 flex items-center justify-center text-[9px] text-muted-foreground flex-shrink-0">i</span>
           </span>
           <span className="text-[12px] text-muted-foreground font-medium w-[100px] flex-shrink-0">Position</span>
-          <span className="text-[12px] text-muted-foreground font-medium w-[140px] flex-shrink-0">All mentions</span>
-          <span className="text-[12px] text-muted-foreground font-medium w-[110px] flex-shrink-0">Citations</span>
+          <span className="text-[12px] text-muted-foreground font-medium w-[160px] flex-shrink-0">All mentions</span>
           <span className="text-[12px] text-muted-foreground font-medium flex-1 min-w-0">Response</span>
         </div>
 
@@ -1313,19 +1373,8 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
             {/* Mention */}
             <div className="w-[90px] flex-shrink-0">
               {row.mentioned
-                ? (
-                  <div className="w-6 h-6 rounded-full bg-[#e8f5e9] flex items-center justify-center">
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                      <path d="M2.5 6L5 8.5L9.5 3.5" stroke="#43a047" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                ) : (
-                  <div className="w-6 h-6 rounded-full bg-[#fce8e6] flex items-center justify-center">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                      <path d="M2.5 2.5L7.5 7.5M7.5 2.5L2.5 7.5" stroke="#e53935" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                  </div>
-                )
+                ? <img src="/assets/rec/check_circle.svg" alt="mentioned" className="w-6 h-6" />
+                : <img src="/assets/rec/Component 75-2.svg" alt="not mentioned" className="w-6 h-6" />
               }
             </div>
 
@@ -1344,17 +1393,12 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
               }
             </div>
 
-            {/* All mentions */}
-            <div className="w-[140px] flex-shrink-0">
+            {/* All mentions — hover on +N shows site name popover */}
+            <div className="w-[160px] flex-shrink-0">
               {row.mentions.length > 0
-                ? <AvatarStack items={row.mentions} overflow={row.mentionsOverflow} />
+                ? <MentionsWithPopover items={row.mentions} overflow={row.mentionsOverflow} />
                 : <span className="text-[12px] text-muted-foreground">No mention</span>
               }
-            </div>
-
-            {/* Citations */}
-            <div className="w-[110px] flex-shrink-0">
-              <AvatarStack items={row.citations} overflow={0} />
             </div>
 
             {/* Response — "View response" Button reveals on row hover */}
