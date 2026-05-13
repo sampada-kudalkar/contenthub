@@ -1163,8 +1163,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
     <div className="bg-background border border-border rounded-xl overflow-hidden">
       <div className="px-5 pt-4 pb-2">
         <p className="text-[16px] text-foreground font-normal leading-[24px]">
-          Which top competitor blogs are cited by AI for{' '}
-          <span className="text-primary">&lsquo;{query}&rsquo;</span>
+          Which top competitor blogs are cited by AI for &lsquo;{query}&rsquo;
         </p>
         <p className="text-[12px] mt-0.5" style={{ color: '#717182' }}>
           Analyze why competitors blog is getting cited instead of you
@@ -1189,7 +1188,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                     </span>
                     <span className="text-[12px] font-normal leading-none" style={{ color: '#717182' }}>{comp.name}</span>
                   </div>
-                  {comp.pageUrl && (
+                  {comp.pageUrl ? (
                     <a
                       href={comp.pageUrl}
                       target="_blank"
@@ -1198,6 +1197,10 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                     >
                       {comp.name} | Leading agency in Dubbo
                     </a>
+                  ) : (
+                    <span className="text-[13px] text-foreground leading-[20px] truncate">
+                      {comp.name} | Leading agency in Dubbo
+                    </span>
                   )}
                   <p className="text-[13px] leading-[20px] line-clamp-1" style={{ color: '#717182' }}>{comp.llmSnippet}</p>
                 </div>
@@ -1315,8 +1318,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
     <div className="bg-background border border-border rounded-xl overflow-hidden">
       <div className="px-5 py-4">
         <p className="text-[16px] font-normal text-foreground leading-[24px]">
-          How did AI sites respond to{' '}
-          <span className="text-primary font-normal">{query}</span>
+          How did AI sites respond to &lsquo;{query}&rsquo;
         </p>
         <p className="text-[12px] text-muted-foreground mt-0.5">
           To generate this recommendation, we ran these prompts across LLMs. Here are the responses each AI site returned.

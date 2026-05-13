@@ -705,6 +705,7 @@ export const seedRecommendations: Recommendation[] = [
       },
       {
         name: 'McGrath Dubbo',
+        pageUrl: 'https://www.mcgrath.com.au/offices/dubbo',
         gap: 'Mobile-optimized appraisal form with sticky call button captures sellers at their moment of intent',
         totalCitations: 21,
         citationRank: 2,
@@ -838,6 +839,7 @@ export const seedRecommendations: Recommendation[] = [
       },
       {
         name: 'Ray White Dubbo',
+        pageUrl: 'https://www.raywhite.com/dubbo',
         gap: 'Suburb profiles with median prices, recent sales, and agent bios appear for local property searches',
         totalCitations: 27,
         citationRank: 2,
@@ -850,6 +852,7 @@ export const seedRecommendations: Recommendation[] = [
       },
       {
         name: 'McGrath Dubbo',
+        pageUrl: 'https://www.mcgrath.com.au/offices/dubbo',
         gap: 'Rural and lifestyle suburb pages capture searches that a general Dubbo page can\'t rank for',
         totalCitations: 18,
         citationRank: 3,
@@ -1001,6 +1004,7 @@ export const seedRecommendations: Recommendation[] = [
     competitors: makeCompetitors([
       {
         name: 'Bowery',
+        pageUrl: 'https://bowery.com.au/',
         gap: 'Publishes detailed sold property stories with prices and client quotes, cited as proof of local agent credibility',
         llmSnippet: 'Bowery showcases sold properties with full case studies including sale prices, days on market, and client testimonials — frequently cited by AI platforms when buyers and sellers ask about proven Dubbo agents.',
         totalCitations: 42,
@@ -1014,6 +1018,7 @@ export const seedRecommendations: Recommendation[] = [
       },
       {
         name: 'Ray White Dubbo',
+        pageUrl: 'https://www.raywhite.com/dubbo',
         gap: 'Case studies with specific suburb outcomes and vendor quotes build trust before first contact',
         llmSnippet: 'Ray White Dubbo publishes outcome-focused case studies with specific Dubbo properties, achieved prices, and direct vendor quotes that ChatGPT surfaces when users ask about top-performing Dubbo real estate agencies.',
         totalCitations: 29,
@@ -1026,6 +1031,7 @@ export const seedRecommendations: Recommendation[] = [
       },
       {
         name: 'McGrath Dubbo',
+        pageUrl: 'https://www.mcgrath.com.au/offices/dubbo',
         gap: 'Long-standing brand with visible client outcomes surfaces in Gemini for reputation and experience queries',
         llmSnippet: 'McGrath Dubbo leverages their national brand heritage with local Dubbo success stories, appearing in Gemini results when prospective clients search for experienced, proven agents in the region.',
         totalCitations: 18,
