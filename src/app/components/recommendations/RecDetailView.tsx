@@ -583,7 +583,7 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
 
       <div className="flex items-start gap-8 mt-1">
         <div className="flex flex-col gap-1">
-          <p className="text-[28px] font-normal text-foreground leading-none">{current.toFixed(0)}%</p>
+          <p className="text-[32px] font-normal text-foreground leading-none">{current.toFixed(0)}%</p>
           <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
             Current score
@@ -1423,7 +1423,6 @@ interface RecDetailViewProps {
 }
 
 export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavigateToContentHub, onNavigateToBlogCanvas, onCompleteRec: _onCompleteRec }: RecDetailViewProps) {
-  const hasTabs = rec.category === 'FAQ' || (rec.category === 'Content' && !!rec.aeoScore)
   const [activeTab, setActiveTab] = useState<'recommendation' | 'evidence'>('recommendation')
 
   return (
@@ -1463,30 +1462,28 @@ export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavi
         </div>
       </div>
 
-      {/* Tab bar — only for Blog and FAQ */}
-      {hasTabs && (
-        <div className="flex border-b border-border px-6 flex-shrink-0">
-          {(['recommendation', 'evidence'] as const).map(tab => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={cn(
-                'px-1 py-3 mr-6 text-[13px] leading-none relative',
-                activeTab === tab
-                  ? 'text-foreground font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-primary after:rounded-t'
-                  : 'text-muted-foreground hover:text-foreground transition-colors',
-              )}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Tab bar — all rec types */}
+      <div className="flex border-b border-border px-6 flex-shrink-0">
+        {(['recommendation', 'evidence'] as const).map(tab => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => setActiveTab(tab)}
+            className={cn(
+              'px-1 py-3 mr-6 text-[13px] leading-none relative',
+              activeTab === tab
+                ? 'text-foreground font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-primary after:rounded-t'
+                : 'text-muted-foreground hover:text-foreground transition-colors',
+            )}
+          >
+            {tab.charAt(0).toUpperCase() + tab.slice(1)}
+          </button>
+        ))}
+      </div>
 
       {/* Body */}
       <div className="px-6 py-4 flex flex-col gap-4">
-        {hasTabs && activeTab === 'evidence' ? (
+        {activeTab === 'evidence' ? (
           <EvidenceTab rec={rec} />
         ) : rec.category === 'FAQ' ? (
           <FAQDetail rec={rec} metrics={metrics} onNavigateToContentHub={onNavigateToContentHub} />

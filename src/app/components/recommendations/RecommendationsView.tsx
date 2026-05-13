@@ -430,6 +430,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
                   onColumnSheetOpenChange={setColumnSheetOpen}
                   scrollableBody={false}
                   rowDensity="default"
+                  stickyFirstColumn={false}
                 />
               </div>
             )}
