@@ -1129,7 +1129,9 @@ export { MynaConversationsL2NavPanel } from "./MynaConversationsL2NavPanel";
    ═══════════════════════════════════════════ */
 const recommendationsL2Config = {
   sections: [
-    { label: "Actions", children: ["All recommendations", "Pending", "Completed"] },
+    { label: "Actions", children: ["Recommendations"] },
+    { label: "Reports", children: ["Performance"] },
+    { label: "Settings", children: ["Preferences"] },
   ],
 };
 

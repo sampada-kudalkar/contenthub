@@ -17,7 +17,7 @@ import {
   InboxL2NavPanel,
 } from "@/app/components/Sidebar";
 import { ReviewsL2NavPanel as ReviewsL2NavPanelV1 } from "@/app/components/Sidebar.v1";
-import { ReviewsL2NavPanel as ReviewsL2NavPanelV2 } from "@/app/components/Sidebar.v2";
+import { ReviewsL2NavPanel as ReviewsL2NavPanelV2, RecommendationsL2NavPanel } from "@/app/components/Sidebar.v2";
 import { SidebarSectioned } from "@/app/components/SidebarSectioned.v1";
 import { AgentsL2NavPanel as AgentsL2NavPanelV1 } from "@/app/components/AgentsL2NavPanel.v1";
 import { AgentsL2NavPanel as AgentsL2NavPanelV2 } from "@/app/components/AgentsL2NavPanel.v2";
@@ -273,5 +273,13 @@ export const L2AgentsDesignV2: Story = {
     <SidebarFrame>
       <AgentsL2NavPanelV2 currentView="agents-monitor" onViewChange={() => {}} selectedAgentSlug="" />
     </SidebarFrame>
+  ),
+};
+export const RecommendationsL2Nav: Story = {
+  name: "Recommendations L2 nav panel",
+  render: () => (
+    <div className={`${APP_SHELL_GUTTER_SURFACE_CLASS} h-screen`}>
+      <RecommendationsL2NavPanel />
+    </div>
   ),
 };
