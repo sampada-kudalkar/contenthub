@@ -1150,16 +1150,17 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
   return (
     <div className="bg-background border border-border rounded-xl overflow-hidden">
       <div className="px-5 pt-4 pb-2">
-        <p className="text-[14px] font-semibold text-foreground leading-[22px]">
-          Which top competitor blogs are cited by AI for &lsquo;{query}&rsquo;
+        <p className="text-[16px] text-foreground font-normal leading-[24px]">
+          Which top competitor blogs are cited by AI for{' '}
+          <span className="text-primary">&lsquo;{query}&rsquo;</span>
         </p>
-        <p className="text-[12px] text-muted-foreground mt-0.5">
+        <p className="text-[12px] mt-0.5" style={{ color: '#717182' }}>
           Analyze why competitors blog is getting cited instead of you
         </p>
       </div>
 
       {/* Competitor rows */}
-      <div className="px-6 pb-4 flex flex-col gap-3">
+      <div className="px-6 pt-4 pb-4 flex flex-col gap-3">
         {competitors.map(comp => {
           const initial = comp.name.charAt(0).toUpperCase()
           const badge = getBadgeStyle(initial)
@@ -1174,7 +1175,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                     >
                       {initial}
                     </span>
-                    <span className="text-[13px] text-foreground font-medium leading-none">{comp.name}</span>
+                    <span className="text-[12px] text-primary font-normal leading-none">{comp.name}</span>
                   </div>
                   {comp.pageUrl && (
                     <a
@@ -1186,7 +1187,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                       {comp.name} | Leading agency in Dubbo
                     </a>
                   )}
-                  <p className="text-[13px] text-foreground leading-[20px]">{comp.llmSnippet}</p>
+                  <p className="text-[13px] text-foreground leading-[20px] line-clamp-1">{comp.llmSnippet}</p>
                 </div>
                 <AeoScoreBox score={aeoCompScore} />
               </div>
@@ -1301,9 +1302,9 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
   return (
     <div className="bg-background border border-border rounded-xl overflow-hidden">
       <div className="px-5 py-4">
-        <p className="text-[14px] font-semibold text-foreground leading-[22px]">
+        <p className="text-[16px] font-normal text-foreground leading-[24px]">
           How did AI sites respond to{' '}
-          <span className="text-primary">{query}</span>
+          <span className="text-primary font-normal">{query}</span>
         </p>
         <p className="text-[12px] text-muted-foreground mt-0.5">
           To generate this recommendation, we ran these prompts across LLMs. Here are the responses each AI site returned.
@@ -1311,7 +1312,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
       </div>
 
       {/* Platform tabs */}
-      <div className="flex border-b border-border px-5">
+      <div className="flex px-5">
         {LLM_EVIDENCE_PLATFORMS.map(platform => (
           <button
             key={platform}
@@ -1348,7 +1349,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
         {MOCK_LLM_ROWS.map((row, i) => (
           <div
             key={i}
-            className={cn('flex items-center py-6', i > 0 && 'border-t border-border')}
+            className={cn('group/table-row flex items-center py-6', i > 0 && 'border-t border-border')}
           >
             {/* Date */}
             <span className="text-[13px] text-foreground w-[110px] flex-shrink-0">{row.date}</span>
@@ -1403,8 +1404,22 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
               <AvatarStack items={row.citations} overflow={0} />
             </div>
 
-            {/* Response */}
-            <span className="text-[13px] text-foreground flex-1 min-w-0 truncate">{row.response}</span>
+            {/* Response — "View response" Button reveals on row hover */}
+            <div className="flex-1 min-w-0 relative flex items-center overflow-hidden">
+              <span className="text-[13px] text-foreground truncate pr-2 group-hover/table-row:pr-36 transition-all">
+                {row.response}
+              </span>
+              <div className="absolute right-0 hidden group-hover/table-row:flex items-center">
+                <div className="w-12 h-full bg-gradient-to-r from-transparent to-background flex-shrink-0" />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 text-[13px] whitespace-nowrap flex-shrink-0 bg-background"
+                >
+                  View response
+                </Button>
+              </div>
+            </div>
           </div>
         ))}
       </div>
