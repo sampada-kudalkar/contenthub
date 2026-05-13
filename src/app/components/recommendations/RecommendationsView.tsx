@@ -84,7 +84,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
   const store = useRecStore()
   const {
     recommendations, metrics, activeTab, setActiveTab,
-    rejectRec, acceptRec, completeRec,
+    rejectRec, acceptRec, completeRec, revertToPending,
   } = store
 
   const [selectedRecId,   setSelectedRecId]   = useState<string | null>(initialRecId ?? null)
@@ -281,16 +281,14 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
           onBack={() => setSelectedRecId(null)}
           onAccept={(id) => {
             acceptRec(id, 'self')
-            setSelectedRecId(null)
           }}
           onReject={(id) => {
             rejectRec(id)
-            setSelectedRecId(null)
           }}
           onNavigateToContentHub={
             onNavigateToContentHub
               ? (questions) => {
-                  acceptRec(selectedRec.id, 'self')
+                  if (selectedRec.status === 'pending') acceptRec(selectedRec.id, 'self')
                   const aeoScore = selectedRec.aeoScore?.you ?? 92
                   onNavigateToContentHub(selectedRec.id, selectedRec.title, aeoScore, questions)
                 }
@@ -299,12 +297,13 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
           onNavigateToBlogCanvas={
             onNavigateToBlogCanvas
               ? () => {
-                  acceptRec(selectedRec.id, 'self')
+                  if (selectedRec.status === 'pending') acceptRec(selectedRec.id, 'self')
                   onNavigateToBlogCanvas(selectedRec.id, selectedRec.title)
                 }
               : undefined
           }
           onCompleteRec={(id) => completeRec(id)}
+          onRevertToPending={(id) => revertToPending(id)}
         />
       </div>
     )

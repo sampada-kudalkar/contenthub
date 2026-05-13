@@ -1447,6 +1447,8 @@ interface RecDetailViewProps {
   onNavigateToBlogCanvas?: () => void
   /** Callback to mark the recommendation as completed (e.g. after publish) */
   onCompleteRec?: (id: string) => void
+  /** Callback to revert an accepted/completed recommendation back to pending */
+  onRevertToPending?: (id: string) => void
 }
 
 export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavigateToContentHub, onNavigateToBlogCanvas, onCompleteRec: _onCompleteRec }: RecDetailViewProps) {
