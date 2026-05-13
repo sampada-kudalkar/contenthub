@@ -50,9 +50,9 @@ function AeoScoreBox({ score }: { score: number }) {
       <div className="flex items-center gap-2">
         <svg width="20" height="20" viewBox="0 0 20 20" style={{ transform: 'rotate(270deg)' }} className="flex-shrink-0">
           <circle cx="10" cy="10" r={r} fill="none" stroke="hsl(var(--border))" strokeWidth="2.5" />
-          <circle cx="10" cy="10" r={r} fill="none" stroke="hsl(var(--primary))" strokeWidth="2.5" strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round" />
+          <circle cx="10" cy="10" r={r} fill="none" stroke="#4cae3d" strokeWidth="2.5" strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round" />
         </svg>
-        <span className="text-[16px] text-primary leading-[24px] font-normal">{score}</span>
+        <span className="text-[16px] leading-[24px] font-normal" style={{ color: '#4cae3d' }}>{score}</span>
         <span className="text-[14px] text-muted-foreground leading-[20px]">/100</span>
       </div>
       <p className="text-[12px] text-foreground leading-normal whitespace-nowrap">AEO content score</p>
@@ -83,8 +83,8 @@ function AeoLeftPanel({ score, subScores, lowScore = false }: AeoLeftPanelProps)
     <div className="flex flex-col gap-4 px-5 py-5">
       {/* Large score number */}
       <div className="flex items-baseline gap-1.5">
-        <span className={cn('text-[52px] font-semibold leading-none', scoreColor)}>{score}</span>
-        <span className="text-[20px] text-muted-foreground font-normal leading-none">/ 100</span>
+        <span className={cn('text-[32px] font-normal leading-[44px]', scoreColor)}>{score}</span>
+        <span className="text-[15px] text-muted-foreground font-medium leading-[32px]">/ 100</span>
       </div>
 
       {/* Label + info icon */}
@@ -185,40 +185,37 @@ function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: Bl
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto"
+      style={{ backgroundColor: 'rgba(33,33,33,0.64)' }}
       onClick={onClose}
     >
       <div
-        className="relative bg-background rounded-xl shadow-2xl flex flex-col overflow-hidden"
-        style={{ width: 960, maxWidth: 'calc(100vw - 40px)', height: '90vh', maxHeight: 800 }}
+        className="relative bg-background rounded shadow-[0px_4px_8px_0px_rgba(33,33,33,0.18)] flex flex-col overflow-hidden mt-12 mb-12"
+        style={{ width: 1200, maxWidth: 'calc(100vw - 48px)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Modal header */}
-        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <Sparkles size={16} strokeWidth={1.6} absoluteStrokeWidth className="text-primary" />
-            <span className="text-[15px] text-foreground font-normal leading-[24px]">Preview blog</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button size="sm" onClick={onNavigateToBlogCanvas ?? onAccept} className="h-8 text-[13px]">
-              Accept and edit blog →
+        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border bg-background rounded-t">
+          <span className="text-[16px] text-foreground font-normal leading-[24px]">Preview blog</span>
+          <div className="flex items-center gap-3">
+            <Button size="sm" onClick={onNavigateToBlogCanvas ?? onAccept} className="h-9 px-4 text-[14px]">
+              Accept and edit blog
             </Button>
-            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors ml-1">
-              <X size={18} strokeWidth={1.6} absoluteStrokeWidth />
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors">
+              <X size={16} strokeWidth={2} className="text-muted-foreground" />
             </button>
           </div>
         </div>
 
         {/* Modal body: two columns */}
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex gap-5 px-5 pb-5 pt-5 min-h-0" style={{ maxHeight: 'calc(90vh - 64px)' }}>
           {/* Left panel: AEO scores */}
-          <div className="w-[280px] flex-shrink-0 border-r border-border overflow-y-auto bg-background">
+          <div className="w-[360px] flex-shrink-0 border border-border rounded-lg overflow-y-auto bg-background">
             <AeoLeftPanel score={aeoScore} subScores={subScores} lowScore={false} />
           </div>
 
           {/* Right panel: real blog layout */}
-          <div className="flex-1 min-w-0 overflow-y-auto flex flex-col">
+          <div className="flex-1 min-w-0 border border-border rounded-lg overflow-y-auto flex flex-col">
 
             {/* Hero banner */}
             <div className="relative flex-shrink-0 h-[180px] overflow-hidden flex items-end"
@@ -265,7 +262,7 @@ function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: Bl
             </div>
 
             {/* Article body */}
-            <article className="px-8 py-6 flex flex-col gap-5 flex-1">
+            <article className="flex flex-col gap-8 flex-1" style={{ paddingLeft: 50, paddingRight: 37, paddingTop: 38, paddingBottom: 24 }}>
 
               {/* Intro */}
               <p className="text-[15px] text-foreground leading-[26px]">
@@ -575,36 +572,36 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
   const compW = Math.min(compPct, 100)
 
   return (
-    <div className="bg-background border border-border rounded-lg p-4 flex flex-col gap-2 h-full">
+    <div className="bg-background border border-border rounded-lg p-5 flex flex-col gap-2 h-full">
       <p className="text-[14px] text-foreground leading-[22px]">
-        Your {metricLabel}
+        What is your {metricLabel}
       </p>
       <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
 
-      <div className="flex items-start gap-8 mt-1">
+      <div className="flex items-start gap-8 mt-2 mb-2">
         <div className="flex flex-col gap-1">
-          <p className="text-[32px] font-normal text-foreground leading-none">{current.toFixed(0)}%</p>
+          <p className="text-[32px] font-normal text-foreground leading-none">{current.toFixed(1)}%</p>
           <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
             <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
             Current score
           </span>
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-[28px] font-normal text-foreground leading-none">{compPct.toFixed(0)}%</p>
+          <p className="text-[32px] font-normal text-foreground leading-none">{compPct.toFixed(1)}%</p>
           <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-destructive flex-shrink-0" />
+            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#e53935' }} />
             Competitor average
           </span>
         </div>
       </div>
 
-      <div className="relative h-1.5 bg-muted rounded-full mt-1">
+      <div className="relative h-1.5 bg-muted rounded-full">
         <div className="absolute left-0 top-0 h-full bg-primary rounded-full" style={{ width: `${yourW}%` }} />
         {compW > yourW && (
-          <div className="absolute top-0 h-full bg-destructive/40 rounded-full" style={{ left: `${yourW}%`, width: `${compW - yourW}%` }} />
+          <div className="absolute top-0 h-full rounded-full" style={{ background: '#F99E8F', left: `${yourW}%`, width: `${compW - yourW}%` }} />
         )}
         <div className="absolute top-1/2 w-2 h-2 bg-primary rounded-full border-2 border-background shadow-sm" style={{ left: `${yourW}%`, transform: 'translate(-50%, -50%)' }} />
-        <div className="absolute top-1/2 w-2 h-2 bg-destructive rounded-full border-2 border-background shadow-sm" style={{ left: `${compW}%`, transform: 'translate(-50%, -50%)' }} />
+        <div className="absolute top-1/2 w-2 h-2 rounded-full border-2 border-background shadow-sm" style={{ background: '#e53935', left: `${compW}%`, transform: 'translate(-50%, -50%)' }} />
       </div>
     </div>
   )
@@ -625,24 +622,27 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
   const displayBody = rawBody.length > 120 ? rawBody.slice(0, 120) + '...' : rawBody
 
   return (
-    <div className="flex items-start gap-2 bg-violet-50 border border-violet-100 dark:bg-violet-950/20 dark:border-violet-800/30 rounded-lg p-3">
-      <div className="flex flex-1 gap-2 items-start min-w-0">
-        <div className="flex-1 min-w-0 flex flex-col gap-1 justify-center">
+    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
+      <div className="w-[60px] h-[60px] rounded-lg flex-shrink-0 bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center">
+        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white" />
+      </div>
+      <div className="flex flex-1 gap-3 items-start min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
           <div className="flex items-center gap-1">
-            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="text-violet-600 flex-shrink-0" />
-            <span className="text-[12px] leading-[18px] text-violet-600">Blog generated for you</span>
+            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
+            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>Blog generated for you</span>
           </div>
           <p className="text-[14px] text-foreground leading-[20px] font-normal">{displayTitle}</p>
           {displayBody && (
-            <p className="text-[13px] text-muted-foreground leading-[18px] line-clamp-2">{displayBody}</p>
+            <p className="text-[14px] text-muted-foreground leading-[20px] tracking-[-0.28px]">
+              {displayBody}{' '}
+              {onOpenClick && (
+                <button onClick={onOpenClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+                  View blog
+                </button>
+              )}
+            </p>
           )}
-          <div className="mt-2 flex items-center gap-2">
-            {onOpenClick && (
-              <Button variant="outline" size="sm" onClick={onOpenClick} className="h-8 text-[13px]">
-                Preview blog
-              </Button>
-            )}
-          </div>
         </div>
       </div>
       <AeoScoreBox score={aeoScore} />
@@ -665,29 +665,27 @@ function FAQPreviewBox({ rec, onPreviewClick, onNavigateToContentHub }: FAQPrevi
   const aeoScore = rec.aeoScore?.you ?? 95
 
   return (
-    <div className="flex items-start gap-2 bg-violet-50 border border-violet-100 dark:bg-violet-950/20 dark:border-violet-800/30 rounded-lg p-3">
-      <div className="flex flex-1 gap-2 items-start min-w-0">
-        <div className="flex-1 min-w-0 flex flex-col gap-1 justify-center">
+    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f5ff' }}>
+      <div className="w-[60px] h-[60px] rounded-lg flex-shrink-0 bg-gradient-to-br from-purple-400 to-violet-600 flex items-center justify-center">
+        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white" />
+      </div>
+      <div className="flex flex-1 gap-3 items-start min-w-0">
+        <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
           <div className="flex items-center gap-1">
-            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="text-violet-600 flex-shrink-0" />
-            <span className="text-[12px] leading-[18px] text-violet-600">FAQ set generated for you</span>
+            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
+            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>FAQ set generated for you</span>
           </div>
           <p className="text-[14px] text-foreground leading-[20px] font-normal">{title}</p>
           {preview && (
-            <p className="text-[13px] text-muted-foreground leading-[18px] line-clamp-2">{preview}</p>
+            <p className="text-[14px] text-muted-foreground leading-[20px] tracking-[-0.28px]">
+              {preview}{' '}
+              {onPreviewClick && (
+                <button onClick={onPreviewClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+                  View FAQs
+                </button>
+              )}
+            </p>
           )}
-          <div className="mt-2 flex items-center gap-2">
-            {onPreviewClick && (
-              <Button
-                variant="outline"
-                onClick={onPreviewClick}
-                size="sm"
-                className="h-8 text-[13px]"
-              >
-                Preview FAQs
-              </Button>
-            )}
-          </div>
         </div>
       </div>
       <AeoScoreBox score={aeoScore} />
@@ -709,14 +707,14 @@ function Stepper({ steps }: { steps: Step[] }) {
       {steps.map((step, idx) => {
         const isLast = idx === steps.length - 1
         return (
-          <div key={idx} className="flex gap-2 items-stretch px-4">
+          <div key={idx} className="flex gap-3 items-stretch px-5">
             <div className="flex flex-col items-center flex-shrink-0">
               <div className="w-5 h-5 border border-border rounded-full flex items-center justify-center text-[11px] text-muted-foreground leading-none flex-shrink-0 bg-background mt-0.5">
                 {idx + 1}
               </div>
               {!isLast && <div className="w-px flex-1 bg-border mt-1" />}
             </div>
-            <div className={cn('flex flex-col flex-1 min-w-0 pt-0.5', !isLast ? 'pb-4' : 'pb-1')}>
+            <div className={cn('flex flex-col flex-1 min-w-0 pt-0.5', !isLast ? 'pb-5' : 'pb-1')}>
               <p className="text-[14px] text-foreground leading-[22px]">{step.label}</p>
               <p className="text-[13px] text-muted-foreground leading-[20px] mt-0.5">{step.description}</p>
               {step.cta && (
@@ -730,6 +728,34 @@ function Stepper({ steps }: { steps: Step[] }) {
           </div>
         )
       })}
+    </div>
+  )
+}
+
+// ── Need Help banner ──────────────────────────────────────────────────────────
+
+function NeedHelpBanner() {
+  const [dismissed, setDismissed] = useState(false)
+  if (dismissed) return null
+  return (
+    <div className="flex items-center justify-between gap-4 mx-6 mb-4 mt-2 px-4 py-3 bg-primary/[0.06] rounded-lg">
+      <div className="flex items-center gap-2 min-w-0">
+        <Info size={14} strokeWidth={1.6} absoluteStrokeWidth className="text-primary flex-shrink-0" />
+        <span className="text-[12px] text-muted-foreground leading-[18px]">
+          Need help with implementation? Our team will make the updates for you on your website.
+        </span>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <button className="text-[14px] text-primary font-normal whitespace-nowrap hover:underline">
+          Implement for me
+        </button>
+        <button
+          onClick={() => setDismissed(true)}
+          className="w-6 h-6 flex items-center justify-center rounded hover:bg-primary/10 transition-colors"
+        >
+          <X size={12} strokeWidth={2} className="text-muted-foreground" />
+        </button>
+      </div>
     </div>
   )
 }
@@ -782,18 +808,18 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
           <ScoreCard rec={rec} metrics={metrics} />
         </div>
         {rec.whyItWorks.length > 0 && (
-          <div className="flex-1 bg-background border border-border rounded-lg p-4 min-w-0">
-            <p className="text-[13px] text-muted-foreground font-medium leading-[20px] mb-0.5">Why does this matter to you</p>
-            <p className="text-[12px] text-muted-foreground leading-[18px] mb-2">We analyzed and found these gaps</p>
-            <ul className="flex flex-col gap-2">
+          <div className="flex-1 bg-background border border-border rounded-lg p-5 min-w-0">
+            <p className="text-[16px] text-foreground font-normal leading-[24px] mb-0.5">Why does this recommendation matter to you</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mb-3">We analyzed your reports and found these gaps</p>
+            <ul className="flex flex-col gap-2.5">
               {rec.whyItWorks.map((pt, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px] text-foreground leading-[21px]">
+                <li key={i} className="flex items-start gap-2.5 text-[13px] text-foreground leading-[21px]">
                   <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-muted-foreground flex-shrink-0" />
                   {pt}
                 </li>
               ))}
               {topComp && (
-                <li className="flex items-start gap-2 text-[13px] text-foreground leading-[21px]">
+                <li className="flex items-start gap-2.5 text-[13px] text-foreground leading-[21px]">
                   <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-muted-foreground flex-shrink-0" />
                   {topComp.name} is the top cited competitor
                 </li>
@@ -805,11 +831,11 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
 
       {/* Blog preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-4 pt-4 pb-2">
+        <div className="px-5 pt-4 pb-2">
           <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">How can you fix this gap</p>
           <p className="text-[14px] text-foreground font-normal leading-[22px] mt-2">{rec.title}</p>
         </div>
-        <div className="px-4 pb-4 flex flex-col gap-2">
+        <div className="px-5 pb-4 flex flex-col gap-2">
           <p className="text-[13px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
           <BlogPreviewBox rec={rec} aeoScore={aeoScore} onOpenClick={() => setShowBlogPreview(true)} onAccept={onNavigateToBlogCanvas ?? onAccept} />
         </div>
@@ -817,12 +843,13 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
 
       {/* What to do next */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-4 pt-4 pb-2">
-          <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+        <div className="px-5 pt-5 pb-3">
+          <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
+          <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
       </div>
+      <NeedHelpBanner />
 
       {/* Competitor section */}
       {topComp && (
@@ -895,12 +922,12 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
           <ScoreCard rec={rec} metrics={metrics} />
         </div>
         {rec.whyItWorks.length > 0 && (
-          <div className="flex-1 bg-background border border-border rounded-lg p-4 min-w-0">
-            <p className="text-[13px] text-muted-foreground font-medium leading-[20px] mb-0.5">Why does this matter to you</p>
-            <p className="text-[12px] text-muted-foreground leading-[18px] mb-2">We analyzed and found these gaps</p>
-            <ul className="flex flex-col gap-2">
+          <div className="flex-1 bg-background border border-border rounded-lg p-5 min-w-0">
+            <p className="text-[16px] text-foreground font-normal leading-[24px] mb-0.5">Why does this recommendation matter to you</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mb-3">We analyzed your reports and found these gaps</p>
+            <ul className="flex flex-col gap-2.5">
               {rec.whyItWorks.map((pt, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px] text-foreground leading-[21px]">
+                <li key={i} className="flex items-start gap-2.5 text-[13px] text-foreground leading-[21px]">
                   <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-muted-foreground flex-shrink-0" />
                   {pt}
                 </li>
@@ -912,11 +939,11 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
 
       {/* FAQ preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-4 pt-4 pb-2">
+        <div className="px-5 pt-4 pb-2">
           <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">How can you fix this gap</p>
           <p className="text-[14px] text-foreground font-normal leading-[22px] mt-2">{rec.title}</p>
         </div>
-        <div className="px-4 pb-4 flex flex-col gap-2">
+        <div className="px-5 pb-4 flex flex-col gap-2">
           <p className="text-[13px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
           <FAQPreviewBox
             rec={rec}
@@ -928,12 +955,13 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
 
       {/* What to do next */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-4 pt-4 pb-2">
-          <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+        <div className="px-5 pt-5 pb-3">
+          <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
+          <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
       </div>
+      <NeedHelpBanner />
     </div>
   )
 }
@@ -961,18 +989,18 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
           <ScoreCard rec={rec} metrics={metrics} />
         </div>
         {rec.whyItWorks.length > 0 && (
-          <div className="flex-1 bg-background border border-border rounded-lg p-4 min-w-0">
-            <p className="text-[13px] text-muted-foreground font-medium leading-[20px] mb-0.5">Why does this recommendation matter to you</p>
-            <p className="text-[12px] text-muted-foreground leading-[18px] mb-2">We analyzed your reports and found these gaps</p>
-            <ul className="flex flex-col gap-2">
+          <div className="flex-1 bg-background border border-border rounded-lg p-5 min-w-0">
+            <p className="text-[16px] text-foreground font-normal leading-[24px] mb-0.5">Why does this recommendation matter to you</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mb-3">We analyzed your reports and found these gaps</p>
+            <ul className="flex flex-col gap-2.5">
               {rec.whyItWorks.map((pt, i) => (
-                <li key={i} className="flex items-start gap-2 text-[13px] text-foreground leading-[21px]">
+                <li key={i} className="flex items-start gap-2.5 text-[13px] text-foreground leading-[21px]">
                   <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-muted-foreground flex-shrink-0" />
                   {pt}
                 </li>
               ))}
               {topComp && (
-                <li className="flex items-start gap-2 text-[13px] text-foreground leading-[21px]">
+                <li className="flex items-start gap-2.5 text-[13px] text-foreground leading-[21px]">
                   <span className="mt-[7px] w-[5px] h-[5px] rounded-full bg-muted-foreground flex-shrink-0" />
                   {topComp.name} is the top cited competitor for {rec.category}
                 </li>
@@ -983,21 +1011,22 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
       </div>
 
       {/* Overview card */}
-      <div className="bg-background border border-border rounded-lg px-4 pt-4 pb-4">
-        <p className="text-[14px] text-foreground font-normal leading-[22px]">{rec.title}</p>
-        <p className="text-[13px] text-muted-foreground font-normal leading-[20px] mt-1">{rec.description}</p>
+      <div className="bg-background border border-border rounded-lg px-5 pt-4 pb-4">
+        <p className="text-[16px] text-muted-foreground font-normal leading-[24px] tracking-[-0.32px]">{rec.title}</p>
+        <p className="text-[14px] text-foreground font-normal leading-[20px] tracking-[-0.28px] mt-1">{rec.expectedImpact ?? rec.description}</p>
       </div>
 
       {/* What to do next */}
       {steps.length > 0 && (
         <div className="bg-background border border-border rounded-lg">
-          <div className="px-4 pt-4 pb-2">
-            <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">What to do next</p>
-            <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+          <div className="px-5 pt-5 pb-3">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
           </div>
           <Stepper steps={steps} />
         </div>
       )}
+      <NeedHelpBanner />
     </div>
   )
 }
@@ -1463,17 +1492,17 @@ export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavi
       </div>
 
       {/* Tab bar — all rec types */}
-      <div className="flex border-b border-border px-6 flex-shrink-0">
+      <div className="border-b border-border px-6 flex gap-6 bg-background flex-shrink-0 sticky top-0 z-30">
         {(['recommendation', 'evidence'] as const).map(tab => (
           <button
             key={tab}
             type="button"
             onClick={() => setActiveTab(tab)}
             className={cn(
-              'px-1 py-3 mr-6 text-[13px] leading-none relative',
+              'py-3 text-[14px] font-normal border-b-2 -mb-px transition-colors',
               activeTab === tab
-                ? 'text-foreground font-medium after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-primary after:rounded-t'
-                : 'text-muted-foreground hover:text-foreground transition-colors',
+                ? 'border-primary text-foreground'
+                : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
