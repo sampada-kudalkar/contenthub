@@ -528,7 +528,7 @@ export function AppDataTable<TData>({
                           {canSort ? (
                             <button
                               type="button"
-                              className="flex min-w-0 items-center gap-1 rounded-md p-1 text-left text-[length:var(--table-label-size)] leading-normal font-medium text-muted-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                              className="flex min-w-0 items-center gap-1 rounded-md py-1 text-left text-[length:var(--table-label-size)] leading-normal font-medium text-muted-foreground hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                               onClick={header.column.getToggleSortingHandler()}
                             >
                               <span
@@ -559,7 +559,7 @@ export function AppDataTable<TData>({
                               )}
                             </button>
                           ) : (
-                            <span className="min-w-0 truncate pl-1 font-medium">
+                            <span className="min-w-0 truncate font-medium">
                               {flexRender(header.column.columnDef.header, header.getContext())}
                             </span>
                           )}

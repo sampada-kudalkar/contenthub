@@ -2,7 +2,6 @@ import { useState, useRef, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import {
-  Clock, CheckCircle2, Check, XCircle,
   Search, MoreVertical, MapPin, CircleCheck, CircleX,
   ChevronDown,
 } from 'lucide-react'
@@ -23,12 +22,12 @@ import type { BusinessMetrics } from './recTypes'
 const TILE_CONFIG: {
   tab: RecStatus
   label: string
-  Icon: React.ElementType
+  iconSrc: string
 }[] = [
-  { tab: 'pending',   label: 'Pending',   Icon: Clock        },
-  { tab: 'accepted',  label: 'Accepted',  Icon: CheckCircle2 },
-  { tab: 'completed', label: 'Completed', Icon: Check        },
-  { tab: 'rejected',  label: 'Rejected',  Icon: XCircle      },
+  { tab: 'pending',   label: 'Pending',   iconSrc: '/assets/rec/pending-icon.svg'      },
+  { tab: 'accepted',  label: 'Accepted',  iconSrc: '/assets/rec/check_circle.svg'      },
+  { tab: 'completed', label: 'Completed', iconSrc: '/assets/rec/Component 75-1.svg'   },
+  { tab: 'rejected',  label: 'Rejected',  iconSrc: '/assets/rec/Component 75-2.svg'   },
 ]
 
 // ── Effort sort order ─────────────────────────────────────────────────────────
@@ -54,42 +53,6 @@ const CATEGORY_METRIC: Partial<Record<RecCategory, { label: string; key: keyof B
   'Reviews':             { label: 'Sentiment score',  key: 'sentiment' },
 }
 
-// ── Performance bar (single track, blue + salmon) ─────────────────────────────
-
-function PerformanceBar({ rec, metrics }: { rec: Recommendation; metrics: BusinessMetrics }) {
-  const meta    = CATEGORY_METRIC[rec.category]
-  const current = rec.youScore !== undefined ? rec.youScore : (meta ? (metrics[meta.key] as number) : 0)
-  const compPct = rec.compScore !== undefined
-    ? rec.compScore
-    : (() => {
-        const compTotal    = rec.competitors.reduce((s, c) => s + c.totalCitations, 0)
-        const avgCitations = rec.competitors.length > 0 ? compTotal / rec.competitors.length : 0
-        const maxCitations = rec.competitors[0]?.totalCitations ?? 1
-        return Math.min((avgCitations / maxCitations) * (current * 1.1), 100)
-      })()
-  const label = meta?.label ?? 'Score'
-  const yourW  = Math.min(current, 100)
-  const compW  = Math.min(compPct, 100)
-
-  return (
-    <div className="flex flex-col gap-1.5 min-w-0">
-      <div className="relative h-3 bg-[#eaeaea] dark:bg-muted rounded-[4px] mt-2 overflow-hidden flex">
-        <div className="h-full bg-primary" style={{ width: `${yourW}%` }} />
-        {compW > yourW && (
-          <div className="h-full bg-[#ff9e80]" style={{ width: `${compW - yourW}%` }} />
-        )}
-      </div>
-      <div className="flex flex-col mt-0.5">
-        <span className="text-[12px] text-foreground leading-[20px] whitespace-nowrap font-normal">
-          Your {label} : {current === 0 ? '0%' : `${current.toFixed(1)}%`}
-        </span>
-        <span className="text-[12px] text-muted-foreground leading-[18px] whitespace-nowrap font-normal">
-          Industry average : {compPct.toFixed(0)}%
-        </span>
-      </div>
-    </div>
-  )
-}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -201,7 +164,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
         };
         const label = CATEGORY_DISPLAY[row.original.category] ?? row.original.category;
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded border border-border bg-background text-[12px] text-muted-foreground leading-[18px] font-normal whitespace-nowrap">
+          <span className="text-[14px] text-foreground font-normal whitespace-nowrap">
             {label}
           </span>
         );
@@ -214,25 +177,51 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
       size: 360,
       sortingFn: 'basic',
       cell: ({ row }) => (
-        <p className="text-[14px] text-foreground leading-[22px] font-normal line-clamp-3 whitespace-normal pr-4">
-          {row.original.description}
-        </p>
+        <div className="flex items-start gap-2 pr-4">
+          {row.original.effort === 'Quick win' && (
+            <img src="/assets/rec/electric_bolt.svg" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          )}
+          {row.original.effort === 'Bigger lift' && (
+            <img src="/assets/rec/lead.svg" alt="" className="w-4 h-4 flex-shrink-0 mt-0.5" />
+          )}
+          <p className="text-[14px] text-foreground leading-[22px] font-normal line-clamp-3 whitespace-normal">
+            {row.original.description}
+          </p>
+        </div>
       ),
     }),
     recColumnHelper.accessor(row => {
       const meta = CATEGORY_METRIC[row.category]
       return row.youScore !== undefined ? row.youScore : (meta ? (metrics[meta.key] as number) : 0)
     }, {
-      id: 'currentPerformance',
-      header: 'Current performance',
-      meta: { settingsLabel: 'Current performance' },
+      id: 'youVsCompetitor',
+      header: 'You vs competitor',
+      meta: { settingsLabel: 'You vs competitor' },
       size: 220,
       sortingFn: 'basic',
-      cell: ({ row }) => (
-        <div className="pr-4">
-          <PerformanceBar rec={row.original} metrics={metrics} />
-        </div>
-      ),
+      cell: ({ row }) => {
+        const rec = row.original
+        const meta = CATEGORY_METRIC[rec.category]
+        const metricLabel = meta?.label ?? 'Score'
+        const youScore = rec.youScore !== undefined ? rec.youScore : (meta ? (metrics[meta.key] as number) : 0)
+        const compScore = rec.compScore ?? 0
+        return (
+          <div className="flex flex-col gap-0.5 min-w-0 pr-4">
+            <div className="flex items-center gap-1">
+              <span className="text-[14px] text-foreground font-normal leading-[20px] whitespace-nowrap">
+                {youScore.toFixed(1)}%
+              </span>
+              <span className="text-[14px] text-muted-foreground font-normal leading-[20px]">|</span>
+              <span className="text-[14px] text-foreground font-normal leading-[20px] whitespace-nowrap">
+                {compScore.toFixed(1)}%
+              </span>
+            </div>
+            <span className="text-[12px] text-muted-foreground font-normal leading-[16px]">
+              {metricLabel}
+            </span>
+          </div>
+        )
+      },
     }),
     recColumnHelper.accessor(row => row.locations ?? 1, {
       id: 'locations',
@@ -399,7 +388,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
                     onClick={() => setActiveTab(tile.tab)}
                     className={cn(
                       'flex-1 flex flex-col items-start px-4 pt-4 pb-4 text-left transition-colors',
-                      isSelected ? 'bg-primary/[0.06] border-b-2 border-primary' : 'border-b-2 border-transparent',
+                      isSelected ? 'bg-primary/[0.06]' : 'hover:bg-muted/30',
                     )}
                   >
                     <span className={cn(
@@ -409,12 +398,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
                       {n}
                     </span>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <tile.Icon
-                        size={16}
-                        strokeWidth={1.6}
-                        absoluteStrokeWidth
-                        className={isSelected ? 'text-primary' : 'text-muted-foreground'}
-                      />
+                      <img src={tile.iconSrc} alt="" className="w-4 h-4 flex-shrink-0" />
                       <span className="text-[14px] text-foreground leading-[20px] tracking-[-0.28px] font-normal">
                         {tile.label}
                       </span>
