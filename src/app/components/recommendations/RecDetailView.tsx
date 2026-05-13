@@ -333,6 +333,7 @@ interface FAQPreviewModalProps {
   rec: Recommendation
   onClose: () => void
   onNavigateToContentHub?: (questions: { question: string; answer: string }[]) => void
+  status: RecStatus
 }
 
 interface FAQItem {
@@ -383,7 +384,7 @@ const FAQ_ITEMS_PROPERTY_APPRAISAL: FAQItem[] = [
   },
 ]
 
-function FAQPreviewModal({ rec, onClose, onNavigateToContentHub }: FAQPreviewModalProps) {
+function FAQPreviewModal({ rec, onClose, onNavigateToContentHub, status }: FAQPreviewModalProps) {
   const aeoScore = rec.aeoScore?.you ?? 95
   const subScores = rec.aeoScore?.subScores ?? DEFAULT_FAQ_SUBSCORES
   const asset = rec.generatedAsset
@@ -416,15 +417,17 @@ function FAQPreviewModal({ rec, onClose, onNavigateToContentHub }: FAQPreviewMod
                 size="sm"
                 className="h-9 px-4 text-[14px]"
                 onClick={() => {
-                  toast.success('Recommendation accepted', {
-                    duration: 3000,
-                    icon: <CheckCircle2 size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-green-600" />,
-                  });
-                  onClose();
-                  onNavigateToContentHub(faqItems);
+                  if (status === 'pending') {
+                    toast.success('Recommendation accepted', {
+                      duration: 5000,
+                      icon: <CheckCircle2 size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-green-600" />,
+                    })
+                  }
+                  onClose()
+                  onNavigateToContentHub(faqItems)
                 }}
               >
-                Accept and edit FAQ
+                {(status === 'accepted' || status === 'in_progress') ? 'Edit FAQs' : 'Accept and edit FAQ'}
               </Button>
             )}
             <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors">
@@ -570,10 +573,7 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
         <p className="text-[12px] text-muted-foreground leading-[18px] flex items-baseline gap-1 min-w-0">
           <span className="truncate">{rec.description}</span>
           {onOpenClick && (
-            <span
-              className="text-primary hover:underline font-normal whitespace-nowrap shrink-0 cursor-pointer"
-              onClick={(e: MouseEvent) => { e.stopPropagation(); onOpenClick(); }}
-            >
+            <span className="text-primary hover:underline font-normal whitespace-nowrap shrink-0">
               View blog
             </span>
           )}
@@ -598,19 +598,23 @@ function FAQPreviewBox({ rec, onPreviewClick, onNavigateToContentHub }: FAQPrevi
   const draftTitle = `${rec.shortAction ?? rec.title} draft`
 
   return (
-    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
+    <div
+      className="flex items-start gap-3 rounded-lg p-3 cursor-pointer"
+      style={{ background: '#f9f7fd' }}
+      onClick={onPreviewClick}
+    >
       <div className="flex flex-1 min-w-0 flex-col gap-0.5 justify-center">
         <div className="flex items-center gap-1">
           <img src="/assets/rec/ai-agent.svg" alt="" className="w-3 h-3 flex-shrink-0" />
           <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
         <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{draftTitle}</p>
-        <p className="text-[12px] text-muted-foreground leading-[18px]">
-          We&apos;ve created a FAQ section draft based on what&apos;s working for competitors. Review and publish on your website.{' '}
+        <p className="text-[12px] text-muted-foreground leading-[18px] flex items-baseline gap-1 min-w-0">
+          <span className="truncate">We&apos;ve created a FAQ section draft based on what&apos;s working for competitors. Review and publish on your website.</span>
           {onPreviewClick && (
-            <button onClick={onPreviewClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+            <span className="text-primary hover:underline font-normal whitespace-nowrap shrink-0">
               View FAQs
-            </button>
+            </span>
           )}
         </p>
       </div>
@@ -800,15 +804,28 @@ interface FAQDetailProps {
 function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
   const [showFAQPreview, setShowFAQPreview] = useState(false)
 
+  const isFAQRejectedOrCompleted = rec.status === 'rejected' || rec.status === 'completed' || rec.status === 'in_progress'
+
   const steps: Step[] = [
     {
       label: 'Review your AI-generated FAQ set',
       description: 'Read through the generated Q&As and edit any details to match your voice and local knowledge.',
-      cta: { label: 'Preview FAQs', onClick: () => setShowFAQPreview(true) },
+      cta: isFAQRejectedOrCompleted
+        ? undefined
+        : { label: 'Review FAQs', onClick: () => setShowFAQPreview(true) },
     },
-    { label: 'Add FAQ schema to your website', description: 'Paste the structured JSON-LD schema generated by Birdeye into your site\'s <head> or page body.' },
-    { label: 'Publish to Birdeye website page', description: 'Create a dedicated FAQ page and publish it through Birdeye to maximize AI citation potential.' },
-    { label: 'Mark complete after publishing', description: 'Mark this task as complete to track your progress in Search AI score.' },
+    {
+      label: 'Add FAQ schema to your website',
+      description: "Paste the structured JSON-LD schema generated by Birdeye into your site's <head> or page body.",
+    },
+    {
+      label: 'Publish to Birdeye website page',
+      description: 'Create a dedicated FAQ page and publish it through Birdeye to maximize AI citation potential.',
+    },
+    {
+      label: 'Mark complete after publishing',
+      description: 'Mark this task as complete to track your progress in Search AI score.',
+    },
   ]
 
   return (
@@ -818,6 +835,7 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
           rec={rec}
           onClose={() => setShowFAQPreview(false)}
           onNavigateToContentHub={onNavigateToContentHub}
+          status={rec.status}
         />
       )}
 
