@@ -72,12 +72,7 @@ interface AeoLeftPanelProps {
 }
 
 function AeoLeftPanel({ score, subScores, lowScore = false }: AeoLeftPanelProps) {
-  const pct = Math.min(score, 100)
-  const scoreColor  = lowScore ? 'text-primary'    : 'text-[#3d9e4a]'
-  const barColor    = lowScore ? 'bg-destructive/80' : 'bg-primary'
-  const pillColor   = lowScore
-    ? 'bg-destructive text-destructive-foreground'
-    : 'bg-[#1a3a4a] text-white'
+  const scoreColor = lowScore ? 'text-primary' : 'text-[#3d9e4a]'
 
   return (
     <div className="flex flex-col gap-4 px-5 py-5">
@@ -93,32 +88,6 @@ function AeoLeftPanel({ score, subScores, lowScore = false }: AeoLeftPanelProps)
         <div className="w-4 h-4 rounded-full border border-muted-foreground/40 flex items-center justify-center flex-shrink-0">
           <span className="text-[10px] text-muted-foreground leading-none">?</span>
         </div>
-      </div>
-
-      {/* Progress bar with "You" pill */}
-      <div className="flex flex-col gap-0.5">
-        {/* "You" pill positioned at score% */}
-        <div className="relative h-5 mb-1">
-          <div
-            className="absolute top-0"
-            style={{ left: `${Math.max(0, pct - 4)}%`, transform: pct > 90 ? 'translateX(-100%)' : 'none' }}
-          >
-            <span className={cn('text-[11px] px-2 py-0.5 rounded-full font-medium leading-none', pillColor)}>
-              {lowScore ? `You ${score}` : 'You'}
-            </span>
-          </div>
-        </div>
-        {/* Track */}
-        <div className="relative h-2.5 bg-muted rounded-full overflow-hidden">
-          <div className={cn('h-full rounded-full', barColor)} style={{ width: `${pct}%` }} />
-        </div>
-        {/* Min/max labels */}
-        {lowScore && (
-          <div className="flex items-center justify-between mt-1">
-            <span className="text-[11px] text-muted-foreground">0</span>
-            <span className="text-[11px] text-muted-foreground">100</span>
-          </div>
-        )}
       </div>
 
       <div className="border-t border-border" />
@@ -464,26 +433,26 @@ function FAQPreviewModal({ rec, onClose, onNavigateToContentHub }: FAQPreviewMod
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
-      style={{ backgroundColor: 'rgba(0,0,0,0.45)' }}
+      className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto"
+      style={{ backgroundColor: 'rgba(33,33,33,0.64)' }}
       onClick={onClose}
     >
       <div
-        className="relative bg-background rounded-xl shadow-2xl flex flex-col overflow-hidden"
-        style={{ width: 900, maxWidth: 'calc(100vw - 40px)', height: '85vh', maxHeight: 720 }}
+        className="relative bg-background rounded shadow-[0px_4px_8px_0px_rgba(33,33,33,0.18)] flex flex-col overflow-hidden mt-12 mb-12"
+        style={{ width: 1200, maxWidth: 'calc(100vw - 48px)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Modal header */}
-        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border">
+        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border bg-background rounded-t">
           <div className="flex items-center gap-2">
-            <Sparkles size={16} strokeWidth={1.6} absoluteStrokeWidth className="text-primary" />
-            <span className="text-[15px] text-foreground font-normal leading-[24px]">Preview FAQ set</span>
+            <img src="/assets/rec/ai-agent.svg" alt="" className="w-4 h-4 flex-shrink-0" />
+            <span className="text-[16px] text-foreground font-normal leading-[24px]">Preview FAQ set</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {onNavigateToContentHub && (
               <Button
                 size="sm"
-                className="h-8 text-[13px]"
+                className="h-9 px-4 text-[14px]"
                 onClick={() => {
                   toast.success('Recommendation accepted', {
                     duration: 3000,
@@ -493,24 +462,24 @@ function FAQPreviewModal({ rec, onClose, onNavigateToContentHub }: FAQPreviewMod
                   onNavigateToContentHub(faqItems);
                 }}
               >
-                Accept and edit FAQ →
+                Accept and edit FAQ
               </Button>
             )}
-            <button onClick={onClose} className="text-muted-foreground hover:text-foreground transition-colors ml-1">
-              <X size={18} strokeWidth={1.6} absoluteStrokeWidth />
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors">
+              <X size={16} strokeWidth={2} className="text-muted-foreground" />
             </button>
           </div>
         </div>
 
         {/* Modal body: two columns */}
-        <div className="flex flex-1 min-h-0 overflow-hidden">
+        <div className="flex gap-5 px-5 pb-5 pt-5 min-h-0" style={{ maxHeight: 'calc(90vh - 64px)' }}>
           {/* Left panel: AEO score + breakdown */}
-          <div className="w-[300px] flex-shrink-0 border-r border-border overflow-y-auto bg-background">
+          <div className="w-[360px] flex-shrink-0 border border-border rounded-lg overflow-y-auto bg-background">
             <AeoLeftPanel score={aeoScore} subScores={subScores} lowScore={false} />
           </div>
 
           {/* Right panel: FAQ Q&A accordion */}
-          <div className="flex-1 min-w-0 overflow-y-auto px-8 py-6 flex flex-col gap-6">
+          <div className="flex-1 min-w-0 border border-border rounded-lg overflow-y-auto flex flex-col gap-6" style={{ paddingLeft: 50, paddingRight: 37, paddingTop: 38, paddingBottom: 24 }}>
             <div className="flex flex-col gap-1">
               <h1 className="text-[18px] text-foreground font-normal leading-[28px]">{asset?.title ?? rec.title}</h1>
               <p className="text-[13px] text-muted-foreground leading-[20px]">AI-generated FAQ set · {faqItems.length} questions</p>
@@ -619,10 +588,6 @@ interface BlogPreviewBoxProps {
 }
 
 function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBoxProps) {
-  const displayTitle = rec.title
-  const rawBody = rec.description
-  const displayBody = rawBody.length > 120 ? rawBody.slice(0, 120) + '...' : rawBody
-
   return (
     <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
       <img
@@ -630,24 +595,20 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
         alt=""
         className="w-[60px] h-[60px] object-cover rounded-lg flex-shrink-0"
       />
-      <div className="flex flex-1 gap-3 items-start min-w-0">
-        <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
-          <div className="flex items-center gap-1">
-            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
-            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
-          </div>
-          <p className="text-[14px] text-foreground leading-[20px] font-normal">{displayTitle}</p>
-          {displayBody && (
-            <p className="text-[12px] text-muted-foreground leading-[18px]">
-              {displayBody}{' '}
-              {onOpenClick && (
-                <button onClick={onOpenClick} className="text-primary hover:underline font-normal whitespace-nowrap">
-                  View blog
-                </button>
-              )}
-            </p>
-          )}
+      <div className="flex flex-1 min-w-0 flex-col gap-0.5 justify-center">
+        <div className="flex items-center gap-1">
+          <img src="/assets/rec/ai-agent.svg" alt="" className="w-3 h-3 flex-shrink-0" />
+          <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
+        <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{rec.title}</p>
+        <p className="text-[12px] text-muted-foreground leading-[18px] truncate">
+          {rec.description}{' '}
+          {onOpenClick && (
+            <button onClick={onOpenClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+              View blog
+            </button>
+          )}
+        </p>
       </div>
       <AeoScoreBox score={aeoScore} />
     </div>
@@ -663,34 +624,26 @@ interface FAQPreviewBoxProps {
 }
 
 function FAQPreviewBox({ rec, onPreviewClick, onNavigateToContentHub }: FAQPreviewBoxProps) {
-  const asset = rec.generatedAsset
-  const title = asset?.title ?? rec.title
-  const preview = asset?.previewText ?? ''
   const aeoScore = rec.aeoScore?.you ?? 95
+  // Title: use shortAction if available (e.g. "Add rental FAQ section"), else rec title — append " draft"
+  const draftTitle = `${rec.shortAction ?? rec.title} draft`
 
   return (
-    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f5ff' }}>
-      <div className="w-[60px] h-[60px] rounded-lg flex-shrink-0 bg-gradient-to-br from-purple-400 to-violet-600 flex items-center justify-center">
-        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white opacity-90" />
-      </div>
-      <div className="flex flex-1 gap-3 items-start min-w-0">
-        <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
-          <div className="flex items-center gap-1">
-            <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
-            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
-          </div>
-          <p className="text-[14px] text-foreground leading-[20px] font-normal">{title}</p>
-          {preview && (
-            <p className="text-[12px] text-muted-foreground leading-[18px]">
-              {preview}{' '}
-              {onPreviewClick && (
-                <button onClick={onPreviewClick} className="text-primary hover:underline font-normal whitespace-nowrap">
-                  View FAQs
-                </button>
-              )}
-            </p>
-          )}
+    <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
+      <div className="flex flex-1 min-w-0 flex-col gap-0.5 justify-center">
+        <div className="flex items-center gap-1">
+          <img src="/assets/rec/ai-agent.svg" alt="" className="w-3 h-3 flex-shrink-0" />
+          <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
+        <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{draftTitle}</p>
+        <p className="text-[12px] text-muted-foreground leading-[18px]">
+          We&apos;ve created a FAQ section draft based on what&apos;s working for competitors. Review and publish on your website.{' '}
+          {onPreviewClick && (
+            <button onClick={onPreviewClick} className="text-primary hover:underline font-normal whitespace-nowrap">
+              View FAQs
+            </button>
+          )}
+        </p>
       </div>
       <AeoScoreBox score={aeoScore} />
     </div>
