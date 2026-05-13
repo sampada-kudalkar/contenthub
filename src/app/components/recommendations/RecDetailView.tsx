@@ -1451,7 +1451,7 @@ interface RecDetailViewProps {
   onRevertToPending?: (id: string) => void
 }
 
-export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavigateToContentHub, onNavigateToBlogCanvas, onCompleteRec: _onCompleteRec }: RecDetailViewProps) {
+export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavigateToContentHub, onNavigateToBlogCanvas, onCompleteRec: _onCompleteRec, onRevertToPending: _onRevertToPending }: RecDetailViewProps) {
   const [activeTab, setActiveTab] = useState<'recommendation' | 'evidence'>('recommendation')
 
   return (
