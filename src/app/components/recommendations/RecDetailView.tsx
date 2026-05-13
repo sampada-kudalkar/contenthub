@@ -572,11 +572,13 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
   const compW = Math.min(compPct, 100)
 
   return (
-    <div className="bg-background border border-border rounded-lg p-5 flex flex-col gap-2 h-full">
-      <p className="text-[14px] text-foreground leading-[22px]">
-        What is your {metricLabel}
-      </p>
-      <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
+    <div className="bg-background border border-border rounded-lg p-5 flex flex-col gap-3 h-full">
+      <div className="flex flex-col gap-0.5">
+        <p className="text-[16px] text-foreground font-normal leading-[24px]">
+          What is your {metricLabel}
+        </p>
+        <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
+      </div>
 
       <div className="flex items-start gap-8 mt-2 mb-2">
         <div className="flex flex-col gap-1">
@@ -848,8 +850,8 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
           <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
+        <NeedHelpBanner />
       </div>
-      <NeedHelpBanner />
 
       {/* Competitor section */}
       {topComp && (
@@ -960,8 +962,8 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
           <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
+        <NeedHelpBanner />
       </div>
-      <NeedHelpBanner />
     </div>
   )
 }
@@ -1024,9 +1026,9 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
             <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
           </div>
           <Stepper steps={steps} />
+          <NeedHelpBanner />
         </div>
       )}
-      <NeedHelpBanner />
     </div>
   )
 }
@@ -1456,59 +1458,62 @@ export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavi
 
   return (
     <div className="flex-1 overflow-y-auto bg-background">
-      {/* Header */}
-      <div className="px-6 py-4 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 min-w-0">
-          <button
-            onClick={onBack}
-            className="flex items-center justify-center w-8 h-8 rounded hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
-          >
-            <ArrowLeft size={16} strokeWidth={1.6} absoluteStrokeWidth />
-          </button>
-          <p className="text-[15px] text-foreground truncate">{rec.title}</p>
-        </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          {onReject && (
-            <Button variant="outline" size="sm" onClick={() => onReject(rec.id)}>
-              Reject
-            </Button>
-          )}
-          <Button size="sm" onClick={() => onAccept(rec.id)}>
-            Accept
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreVertical size={16} strokeWidth={1.6} absoluteStrokeWidth />
+      {/* Sticky top block: header + tab bar */}
+      <div className="sticky top-0 z-30 bg-background flex-shrink-0">
+        {/* Header */}
+        <div className="px-6 py-4 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 min-w-0">
+            <button
+              onClick={onBack}
+              className="flex items-center justify-center w-8 h-8 rounded hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+            >
+              <ArrowLeft size={16} strokeWidth={1.6} absoluteStrokeWidth />
+            </button>
+            <p className="text-[18px] text-foreground font-normal truncate">{rec.title}</p>
+          </div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {onReject && (
+              <Button variant="outline" size="sm" onClick={() => onReject(rec.id)}>
+                Reject
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Download</DropdownMenuItem>
-              <DropdownMenuItem>Email recommendation</DropdownMenuItem>
-              <DropdownMenuItem>Revert to pending</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
-
-      {/* Tab bar — all rec types */}
-      <div className="border-b border-border px-6 flex gap-6 bg-background flex-shrink-0 sticky top-0 z-30">
-        {(['recommendation', 'evidence'] as const).map(tab => (
-          <button
-            key={tab}
-            type="button"
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              'py-3 text-[14px] font-normal border-b-2 -mb-px transition-colors',
-              activeTab === tab
-                ? 'border-primary text-foreground'
-                : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
-          >
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </button>
-        ))}
-      </div>
+            <Button size="sm" onClick={() => onAccept(rec.id)}>
+              Accept
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreVertical size={16} strokeWidth={1.6} absoluteStrokeWidth />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem>Download</DropdownMenuItem>
+                <DropdownMenuItem>Email recommendation</DropdownMenuItem>
+                <DropdownMenuItem>Revert to pending</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+
+        {/* Tab bar — all rec types, no full-width border (active tab underline is the separator) */}
+        <div className="px-6 flex gap-6 bg-background flex-shrink-0">
+          {(['recommendation', 'evidence'] as const).map(tab => (
+            <button
+              key={tab}
+              type="button"
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                'py-3 text-[14px] font-normal border-b-2 -mb-px transition-colors',
+                activeTab === tab
+                  ? 'border-primary text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>{/* end sticky top block */}
 
       {/* Body */}
       <div className="px-6 py-4 flex flex-col gap-4">
