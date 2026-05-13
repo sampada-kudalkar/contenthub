@@ -779,15 +779,17 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
         </div>
       </div>
 
-      {/* What to do next */}
-      <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-5 pb-3">
-          <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+      {/* What to do next — hidden when completed */}
+      {rec.status !== 'completed' && (
+        <div className="bg-background border border-border rounded-lg">
+          <div className="px-5 pt-5 pb-3">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+          </div>
+          <Stepper steps={steps} />
+          <NeedHelpBanner />
         </div>
-        <Stepper steps={steps} />
-        <NeedHelpBanner />
-      </div>
+      )}
 
     </div>
   )
@@ -878,15 +880,17 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
         </div>
       </div>
 
-      {/* What to do next */}
-      <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-5 pb-3">
-          <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+      {/* What to do next — hidden when completed */}
+      {rec.status !== 'completed' && (
+        <div className="bg-background border border-border rounded-lg">
+          <div className="px-5 pt-5 pb-3">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
+          </div>
+          <Stepper steps={steps} />
+          <NeedHelpBanner />
         </div>
-        <Stepper steps={steps} />
-        <NeedHelpBanner />
-      </div>
+      )}
     </div>
   )
 }
@@ -948,8 +952,8 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
         </div>
       </div>
 
-      {/* What to do next */}
-      {steps.length > 0 && (
+      {/* What to do next — hidden when completed */}
+      {steps.length > 0 && rec.status !== 'completed' && (
         <div className="bg-background border border-border rounded-lg">
           <div className="px-5 pt-5 pb-3">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
@@ -1452,7 +1456,7 @@ interface RejectConfirmDialogProps {
   onConfirm: () => void
 }
 
-function RejectConfirmDialog({ onCancel, onConfirm }: RejectConfirmDialogProps) {
+export function RejectConfirmDialog({ onCancel, onConfirm }: RejectConfirmDialogProps) {
   const [checkedReasons, setCheckedReasons] = useState<Set<string>>(new Set())
   const [removePermanently, setRemovePermanently] = useState(false)
 

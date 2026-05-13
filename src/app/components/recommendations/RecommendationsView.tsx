@@ -11,7 +11,7 @@ import { Button } from '@/app/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu'
 import { AppDataTable } from '@/app/components/ui/AppDataTable'
 import { useRecStore } from './useRecStore'
-import { RecDetailView } from './RecDetailView'
+import { RecDetailView, RejectConfirmDialog } from './RecDetailView'
 import { FilterPane, FilterPaneTriggerButton } from '@/app/components/FilterPane'
 import type { FilterItem } from '@/app/components/FilterPanel.v1'
 import type { RecStatus, Recommendation, RecCategory } from './recTypes'
@@ -90,6 +90,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
   const [selectedRecId,   setSelectedRecId]   = useState<string | null>(initialRecId ?? null)
   const [filterPanelOpen, setFilterPanelOpen] = useState(false)
   const [filterItems,     setFilterItems]     = useState<FilterItem[]>(REC_FILTER_ITEMS)
+  const [rejectingRecId,  setRejectingRecId]  = useState<string | null>(null)
 
   // Location popover
   const [showLocPopover,  setShowLocPopover]  = useState(false)
@@ -250,7 +251,7 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
               <button
                 title="Reject"
                 className="flex items-center justify-center w-9 h-9 hover:bg-muted rounded border border-border text-muted-foreground hover:text-foreground transition-colors"
-                onClick={e => { e.stopPropagation(); rejectRec(rec.id) }}
+                onClick={e => { e.stopPropagation(); setRejectingRecId(rec.id) }}
               >
                 <CircleX size={18} strokeWidth={1.6} absoluteStrokeWidth />
               </button>
@@ -430,6 +431,17 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
           </ul>
         </div>,
         document.body,
+      )}
+
+      {/* Reject confirmation dialog — same dialog as detail view */}
+      {rejectingRecId && (
+        <RejectConfirmDialog
+          onCancel={() => setRejectingRecId(null)}
+          onConfirm={() => {
+            rejectRec(rejectingRecId)
+            setRejectingRecId(null)
+          }}
+        />
       )}
     </div>
   )

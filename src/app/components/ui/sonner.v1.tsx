@@ -5,6 +5,13 @@ const Toaster = ({ ...props }: ToasterProps) => {
     <Sonner
       theme="light"
       className="toaster group"
+      duration={5000}
+      toastOptions={{
+        classNames: {
+          title: 'font-normal',
+          description: 'font-normal',
+        },
+      }}
       style={
         {
           "--normal-bg": "#ffffff",
