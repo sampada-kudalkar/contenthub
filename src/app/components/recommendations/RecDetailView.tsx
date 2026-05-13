@@ -54,13 +54,13 @@ function AeoScoreBox({ score }: { score: number }) {
   const pct = Math.min(score, 100) / 100
   return (
     <div className="bg-background border border-border rounded p-2 flex flex-col gap-1 items-start flex-shrink-0">
-      <div className="flex items-center gap-2">
+      <div className="flex items-end gap-2">
         <svg width="20" height="20" viewBox="0 0 20 20" style={{ transform: 'rotate(270deg)' }} className="flex-shrink-0">
           <circle cx="10" cy="10" r={r} fill="none" stroke="hsl(var(--border))" strokeWidth="2.5" />
           <circle cx="10" cy="10" r={r} fill="none" stroke="#4cae3d" strokeWidth="2.5" strokeDasharray={circ} strokeDashoffset={circ * (1 - pct)} strokeLinecap="round" />
         </svg>
-        <span className="text-[16px] leading-[24px] font-normal" style={{ color: '#4cae3d' }}>{score}</span>
-        <span className="text-[14px] text-muted-foreground leading-[20px]">/100</span>
+        <span className="text-[16px] leading-none font-normal" style={{ color: '#4cae3d' }}>{score}</span>
+        <span className="text-[14px] text-muted-foreground leading-none">/100</span>
       </div>
       <p className="text-[12px] text-foreground leading-normal whitespace-nowrap">AEO content score</p>
     </div>
@@ -1147,12 +1147,20 @@ const MOCK_EVIDENCE_COMPETITORS: Recommendation['competitors'] = [
   },
 ]
 
+// Per-competitor AEO total scores and sub-score values
+// Weighted sums verified against DEFAULT_BLOG_SUBSCORES weights [10.2,16.3,8.5,30.5,11.5,22.9]
+const COMP_AEO_SCORES = [84, 79, 81] // Aspect ~84, Ray White ~79, Elders ~81
+const COMP_SUBSCORE_VALS = [
+  [83, 85, 82, 84, 83, 84], // Aspect       → weighted avg ≈ 84
+  [77, 79, 76, 80, 78, 80], // Ray White    → weighted avg ≈ 79
+  [80, 81, 79, 82, 80, 82], // Elders       → weighted avg ≈ 81
+]
+
 function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
   const [compareOpen, setCompareOpen] = useState(false)
   const [subScoresOpen, setSubScoresOpen] = useState(true)
   const rawCompetitors = rec.competitors.length > 0 ? rec.competitors : MOCK_EVIDENCE_COMPETITORS
   const competitors = rawCompetitors.slice(0, 3)
-  const aeoCompScore = rec.aeoScore?.competitor ?? 81
   const aeoYourScore = rec.aeoScore?.you ?? 92
   const subScores = rec.aeoScore?.subScores ?? DEFAULT_BLOG_SUBSCORES
 
@@ -1172,7 +1180,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
 
       {/* Competitor rows */}
       <div className="px-6 pt-4 pb-4 flex flex-col gap-3">
-        {competitors.map(comp => {
+        {competitors.map((comp, idx) => {
           const initial = comp.name.charAt(0).toUpperCase()
           const badge = getBadgeStyle(initial)
           return (
@@ -1204,7 +1212,7 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                   )}
                   <p className="text-[13px] leading-[20px] line-clamp-1" style={{ color: '#717182' }}>{comp.llmSnippet}</p>
                 </div>
-                <AeoScoreBox score={aeoCompScore} />
+                <AeoScoreBox score={COMP_AEO_SCORES[idx] ?? 81} />
               </div>
             </div>
           )
@@ -1269,15 +1277,15 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                   <div className="flex-1 min-w-0">
                     <span className="text-[13px] text-foreground">{aeoYourScore}%</span>
                   </div>
-                  {competitors.map(comp => (
+                  {competitors.map((comp, idx) => (
                     <div key={comp.id} className="flex-1 min-w-0">
-                      <span className="text-[13px] text-foreground">{aeoCompScore}%</span>
+                      <span className="text-[13px] text-foreground">{COMP_AEO_SCORES[idx] ?? 81}%</span>
                     </div>
                   ))}
                 </button>
 
                 {/* Sub-score rows */}
-                {subScoresOpen && subScores.map(sub => (
+                {subScoresOpen && subScores.map((sub, subIdx) => (
                   <div key={sub.name} className="flex items-center py-4 border-t border-border">
                     <div className="w-[38%] flex-shrink-0 pl-6">
                       <p className="text-[13px] text-foreground leading-[18px]">{sub.name}</p>
@@ -1290,9 +1298,9 @@ function CompetitorCitationsCard({ rec }: { rec: Recommendation }) {
                     <div className="flex-1 min-w-0">
                       <span className="text-[13px] text-foreground">{sub.you}%</span>
                     </div>
-                    {competitors.map(comp => (
+                    {competitors.map((comp, idx) => (
                       <div key={comp.id} className="flex-1 min-w-0">
-                        <span className="text-[13px] text-foreground">{sub.competitor}%</span>
+                        <span className="text-[13px] text-foreground">{COMP_SUBSCORE_VALS[idx]?.[subIdx] ?? sub.competitor}%</span>
                       </div>
                     ))}
                   </div>
