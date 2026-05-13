@@ -6,7 +6,7 @@ import { Button } from '@/app/components/ui/button'
 import { Checkbox } from '@/app/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu'
 import { toast } from 'sonner'
-import type { Recommendation, BusinessMetrics, AeoSubScore } from './recTypes'
+import type { Recommendation, BusinessMetrics, AeoSubScore, RecStatus } from './recTypes'
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -146,11 +146,12 @@ interface BlogPreviewModalProps {
   onClose: () => void
   onAccept: () => void
   onNavigateToBlogCanvas?: () => void
+  status: RecStatus
 }
 
 type DynSection = { heading?: string; body?: string; listItems?: string[]; image?: string; imageAlt?: string }
 
-function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: BlogPreviewModalProps) {
+function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas, status }: BlogPreviewModalProps) {
   const aeoScore  = rec.aeoScore?.you ?? 98
   const subScores = rec.aeoScore?.subScores ?? DEFAULT_BLOG_SUBSCORES
   const metaTitle = rec.title
@@ -177,7 +178,7 @@ function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: Bl
           <span className="text-[16px] text-foreground font-normal leading-[24px]">Preview blog</span>
           <div className="flex items-center gap-3">
             <Button size="sm" onClick={onNavigateToBlogCanvas ?? onAccept} className="h-9 px-4 text-[14px]">
-              Accept and edit blog
+              {status === 'accepted' ? 'Edit blog' : 'Accept and edit blog'}
             </Button>
             <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded hover:bg-muted transition-colors">
               <X size={16} strokeWidth={2} className="text-muted-foreground" />
@@ -242,100 +243,52 @@ function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: Bl
             {/* Article body */}
             <article className="flex flex-col gap-8 flex-1" style={{ paddingLeft: 50, paddingRight: 37, paddingTop: 38, paddingBottom: 24 }}>
 
-              {/* Intro */}
-              <p className="text-[15px] text-foreground leading-[26px]">
-                {rec.description}
-              </p>
-
-              {/* Image 1 — suburban property exterior */}
-              <div className="w-full rounded-xl overflow-hidden flex-shrink-0" style={{ height: 200 }}>
-                <img
-                  src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=900&h=200&fit=crop&crop=center&q=80"
-                  alt="Suburban property exterior"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-[11px] text-muted-foreground -mt-3 text-center">Suburb-level pages signal geographic precision to AI retrieval systems</p>
-
-              {/* H2 — Section 1 */}
-              <div className="flex flex-col gap-2 pt-1">
-                <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">
-                  Why location-specific pages win more AI citations
-                </h2>
-                <p className="text-[14px] text-foreground leading-[24px]">
-                  Search AI platforms — including ChatGPT, Gemini, and Perplexity — surface results that are geographically precise. A page titled after your suburb signals relevance to both traditional search algorithms and AI retrieval systems far more effectively than a generic agency homepage. Competitors who publish suburb-level pages are capturing citation share you're currently missing.
-                </p>
-              </div>
-
-              {/* Pull quote */}
-              <div className="border-l-[3px] border-primary bg-primary/5 pl-4 pr-4 py-3 rounded-r-lg">
-                <p className="text-[14px] text-foreground leading-[22px] italic">
-                  "AI models cite pages that directly answer hyper-local queries. A suburb-level service page converts 3× better than a city-level equivalent."
-                </p>
-                <p className="text-[12px] text-muted-foreground mt-1.5">— Birdeye Search AI analysis, 2025</p>
-              </div>
-
-              {/* Image 2 — real estate agent / property consultation */}
-              <div className="w-full rounded-xl overflow-hidden flex-shrink-0" style={{ height: 200 }}>
-                <img
-                  src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=900&h=200&fit=crop&crop=center&q=80"
-                  alt="Real estate agent reviewing property listings"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-[11px] text-muted-foreground -mt-3 text-center">Citation share improvement observed across Birdeye clients · 90-day window</p>
-
-              {/* H2 — Section 2 with list */}
-              <div className="flex flex-col gap-2 pt-1">
-                <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">
-                  What a high-performing service page includes
-                </h2>
-                <p className="text-[14px] text-foreground leading-[24px]">
-                  Based on analysis of top-cited competitor pages in your market, the following elements consistently appear in pages that win AI citations:
-                </p>
-                <ul className="flex flex-col gap-2 mt-1">
-                  {[
-                    'A suburb-specific H1 that names the service and location (e.g. "Property Appraisal in Dubbo North")',
-                    'A 200–400 word introduction addressing the most common local question',
-                    'FAQ schema markup covering 5–8 questions with concise answers',
-                    'Social proof — review count, star rating, and years operating in the area',
-                    'A clear CTA with a local phone number and Google Maps embed',
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2.5 text-[14px] text-foreground leading-[22px]">
-                      <span className="mt-[9px] w-[4px] h-[4px] rounded-full bg-primary flex-shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Image 3 — modern home / neighbourhood */}
-              <div className="w-full rounded-xl overflow-hidden flex-shrink-0" style={{ height: 200 }}>
-                <img
-                  src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=900&h=200&fit=crop&crop=center&q=80"
-                  alt="Modern residential property"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <p className="text-[11px] text-muted-foreground -mt-3 text-center">JSON-LD schema is auto-generated and ready to embed — no developer needed</p>
-
-              {/* H2 — Section 3 */}
-              <div className="flex flex-col gap-2 pt-1">
-                <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">
-                  Maximising AI citation potential after publishing
-                </h2>
-                <p className="text-[14px] text-foreground leading-[24px]">
-                  Once live, AI platforms index your page through structured signals — not just raw content. Embedding JSON-LD schema, maintaining consistent NAP (Name, Address, Phone) data across directories, and earning fresh reviews on your Google Business Profile all compound the page's citation probability over time. Birdeye automates the schema generation and review syndication steps so you can focus entirely on the content itself.
-                </p>
-              </div>
-
-              {/* Conclusion */}
-              <div className="flex flex-col gap-2 pt-1 pb-2">
-                <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">Getting started</h2>
-                <p className="text-[14px] text-foreground leading-[24px]">
-                  Review the AI-generated draft, customise the tone to match your agency's voice, and publish it to your website. Once live, measurable improvements in your Search AI citation score typically appear within 4–6 weeks and are tracked automatically in your Birdeye dashboard.
-                </p>
-              </div>
+              {dynamicSections ? (
+                dynamicSections.map((s, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    {s.heading && <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">{s.heading}</h2>}
+                    {s.body && <p className="text-[14px] text-foreground leading-[24px]">{s.body}</p>}
+                    {s.listItems && s.listItems.length > 0 && (
+                      <ul className="flex flex-col gap-2 mt-1">
+                        {s.listItems.map((item, j) => (
+                          <li key={j} className="flex items-start gap-2.5 text-[14px] text-foreground leading-[22px]">
+                            <span className="mt-[9px] w-[4px] h-[4px] rounded-full bg-primary flex-shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    {s.image && (
+                      <div className="w-full rounded-xl overflow-hidden flex-shrink-0 mt-2" style={{ height: 200 }}>
+                        <img src={s.image} alt={s.imageAlt ?? s.heading ?? ''} className="w-full h-full object-cover" />
+                      </div>
+                    )}
+                  </div>
+                ))
+              ) : (
+                <>
+                  <p className="text-[15px] text-foreground leading-[26px]">{rec.description}</p>
+                  <div className="w-full rounded-xl overflow-hidden flex-shrink-0" style={{ height: 200 }}>
+                    <img src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=900&h=200&fit=crop&crop=center&q=80" alt="Suburban property exterior" className="w-full h-full object-cover" />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground -mt-3 text-center">Suburb-level pages signal geographic precision to AI retrieval systems</p>
+                  <div className="flex flex-col gap-2 pt-1">
+                    <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">Why location-specific pages win more AI citations</h2>
+                    <p className="text-[14px] text-foreground leading-[24px]">Search AI platforms — including ChatGPT, Gemini, and Perplexity — surface results that are geographically precise. Competitors who publish suburb-level pages are capturing citation share you're currently missing.</p>
+                  </div>
+                  <div className="border-l-[3px] border-primary bg-primary/5 pl-4 pr-4 py-3 rounded-r-lg">
+                    <p className="text-[14px] text-foreground leading-[22px] italic">"AI models cite pages that directly answer hyper-local queries. A suburb-level service page converts 3× better than a city-level equivalent."</p>
+                    <p className="text-[12px] text-muted-foreground mt-1.5">— Birdeye Search AI analysis, 2025</p>
+                  </div>
+                  <div className="w-full rounded-xl overflow-hidden flex-shrink-0" style={{ height: 200 }}>
+                    <img src="https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?w=900&h=200&fit=crop&crop=center&q=80" alt="Real estate agent" className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex flex-col gap-2 pt-1 pb-2">
+                    <h2 className="text-[20px] text-foreground font-semibold leading-[28px]">Getting started</h2>
+                    <p className="text-[14px] text-foreground leading-[24px]">Review the AI-generated draft, customise the tone to match your agency's voice, and publish it to your website.</p>
+                  </div>
+                </>
+              )}
             </article>
 
             {/* SEO metadata */}
@@ -740,16 +693,21 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
   const aeoScore = rec.aeoScore?.you ?? 92
   const topComp = rec.competitors[0]
 
+  const isRejectedOrCompleted = rec.status === 'rejected' || rec.status === 'completed'
+
   const steps: Step[] = [
     {
       label: 'Review your Search AI-generated blog',
       description: 'Read through the draft. Change any details, prices, or tone to match your voice',
-      cta: { label: 'Review blog', onClick: () => setShowBlogPreview(true) },
+      cta: isRejectedOrCompleted
+        ? undefined
+        : { label: 'Review blog', onClick: () => setShowBlogPreview(true) },
     },
     {
-      label: 'Accept and publish to your website',
+      label: rec.status === 'accepted' || rec.status === 'completed'
+        ? 'Publish to your website'
+        : 'Accept and publish to your website',
       description: 'Publish to your website to boost Search AI score',
-      cta: { label: 'Accept and edit blog', onClick: onAccept },
     },
     {
       label: 'Mark it as complete after publishing',
@@ -765,6 +723,7 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
           onClose={() => setShowBlogPreview(false)}
           onAccept={() => { setShowBlogPreview(false); onAccept() }}
           onNavigateToBlogCanvas={onNavigateToBlogCanvas ? () => { setShowBlogPreview(false); onNavigateToBlogCanvas() } : undefined}
+          status={rec.status}
         />
       )}
 
