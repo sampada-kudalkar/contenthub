@@ -1,6 +1,10 @@
 import { useState, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
+
+// Asset base path — '/' locally, '/contenthub/' on GitHub Pages
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const B: string = (import.meta as any).env?.BASE_URL ?? '/'
 import { ArrowLeft, Sparkles, X, Copy, Check, ChevronDown, ChevronUp, CheckCircle2, Info, MoreVertical } from 'lucide-react'
 import { Button } from '@/app/components/ui/button'
 import { Checkbox } from '@/app/components/ui/checkbox'
@@ -408,7 +412,7 @@ function FAQPreviewModal({ rec, onClose, onNavigateToContentHub, status }: FAQPr
         {/* Modal header */}
         <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border bg-background rounded-t">
           <div className="flex items-center gap-2">
-            <img src="/assets/rec/ai-agent.svg" alt="" className="w-4 h-4 flex-shrink-0" />
+            <img src={`${B}assets/rec/ai-agent.svg`} alt="" className="w-4 h-4 flex-shrink-0" />
             <span className="text-[16px] text-foreground font-normal leading-[24px]">Preview FAQ set</span>
           </div>
           <div className="flex items-center gap-3">
@@ -566,7 +570,7 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
       />
       <div className="flex flex-1 min-w-0 flex-col gap-0.5 justify-center">
         <div className="flex items-center gap-1">
-          <img src="/assets/rec/ai-agent.svg" alt="" className="w-3 h-3 flex-shrink-0" />
+          <img src={`${B}assets/rec/ai-agent.svg`} alt="" className="w-3 h-3 flex-shrink-0" />
           <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
         <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{rec.title}</p>
@@ -605,7 +609,7 @@ function FAQPreviewBox({ rec, onPreviewClick, onNavigateToContentHub }: FAQPrevi
     >
       <div className="flex flex-1 min-w-0 flex-col gap-0.5 justify-center">
         <div className="flex items-center gap-1">
-          <img src="/assets/rec/ai-agent.svg" alt="" className="w-3 h-3 flex-shrink-0" />
+          <img src={`${B}assets/rec/ai-agent.svg`} alt="" className="w-3 h-3 flex-shrink-0" />
           <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
         </div>
         <p className="text-[14px] text-foreground leading-[20px] font-normal truncate">{draftTitle}</p>
@@ -1368,8 +1372,8 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
             {/* Mention */}
             <div className="w-[90px] flex-shrink-0">
               {row.mentioned
-                ? <img src="/assets/rec/check_circle.svg" alt="mentioned" className="w-6 h-6" />
-                : <img src="/assets/rec/Component 75-2.svg" alt="not mentioned" className="w-6 h-6" />
+                ? <img src={`${B}assets/rec/check_circle.svg`} alt="mentioned" className="w-6 h-6" />
+                : <img src={`${B}assets/rec/Component 75-2.svg`} alt="not mentioned" className="w-6 h-6" />
               }
             </div>
 

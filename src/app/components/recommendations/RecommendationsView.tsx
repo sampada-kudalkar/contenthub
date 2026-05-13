@@ -17,6 +17,11 @@ import type { FilterItem } from '@/app/components/FilterPanel.v1'
 import type { RecStatus, Recommendation, RecCategory } from './recTypes'
 import type { BusinessMetrics } from './recTypes'
 
+// ── Asset base path — handles both local dev (/) and GitHub Pages (/contenthub/) ─
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const B: string = (import.meta as any).env?.BASE_URL ?? '/'  // '/' locally, '/contenthub/' on GH Pages
+
 // ── Status tile config ────────────────────────────────────────────────────────
 
 const TILE_CONFIG: {
@@ -24,10 +29,10 @@ const TILE_CONFIG: {
   label: string
   iconSrc: string
 }[] = [
-  { tab: 'pending',   label: 'Pending',   iconSrc: '/assets/rec/pending-icon.svg'      },
-  { tab: 'accepted',  label: 'Accepted',  iconSrc: '/assets/rec/check_circle.svg'      },
-  { tab: 'completed', label: 'Completed', iconSrc: '/assets/rec/Component 75-1.svg'   },
-  { tab: 'rejected',  label: 'Rejected',  iconSrc: '/assets/rec/Component 75-2.svg'   },
+  { tab: 'pending',   label: 'Pending',   iconSrc: `${B}assets/rec/pending-icon.svg`      },
+  { tab: 'accepted',  label: 'Accepted',  iconSrc: `${B}assets/rec/check_circle.svg`      },
+  { tab: 'completed', label: 'Completed', iconSrc: `${B}assets/rec/Component 75-1.svg`    },
+  { tab: 'rejected',  label: 'Rejected',  iconSrc: `${B}assets/rec/Component 75-2.svg`    },
 ]
 
 // ── Effort sort order ─────────────────────────────────────────────────────────
@@ -173,10 +178,10 @@ export function RecommendationsView({ onNavigateToContentHub, onNavigateToBlogCa
           {/* Always reserve 16px for icon so text aligns regardless of effort level */}
           <div className="w-4 h-4 flex-shrink-0 mt-0.5">
             {row.original.effort === 'Quick win' && (
-              <img src="/assets/rec/electric_bolt.svg" alt="" className="w-4 h-4" />
+              <img src={`${B}assets/rec/electric_bolt.svg`} alt="" className="w-4 h-4" />
             )}
             {row.original.effort === 'Bigger lift' && (
-              <img src="/assets/rec/lead.svg" alt="" className="w-4 h-4" />
+              <img src={`${B}assets/rec/lead.svg`} alt="" className="w-4 h-4" />
             )}
           </div>
           <p className="text-[14px] text-foreground leading-[22px] font-normal line-clamp-3 whitespace-normal">
