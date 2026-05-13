@@ -198,16 +198,6 @@ export function AppDataTable<TData>({
   const densityCell = APP_DATA_TABLE_DENSITY_CELL[rowDensity];
   const densityHead = APP_DATA_TABLE_DENSITY_HEAD[rowDensity];
   const densityResizeH = APP_DATA_TABLE_DENSITY_RESIZE_HANDLE_H[rowDensity];
-  if (
-    process.env.NODE_ENV !== "production" &&
-    hideColumnsButton &&
-    (columnSheetOpenProp === undefined || onColumnSheetOpenChange === undefined)
-  ) {
-    throw new Error(
-      "AppDataTable: hideColumnsButton requires columnSheetOpen and onColumnSheetOpenChange so the header trigger can control the sheet.",
-    );
-  }
-
   const columnSheetControlled =
     columnSheetOpenProp !== undefined && onColumnSheetOpenChange !== undefined;
   const [columnSheetOpenInternal, setColumnSheetOpenInternal] = useState(false);

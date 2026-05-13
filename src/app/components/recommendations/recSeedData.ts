@@ -592,7 +592,21 @@ export const seedRecommendations: Recommendation[] = [
       summary:
         'People search for "free property appraisal Dubbo", "home value Dubbo", and rental appraisal help. Competitors capture these leads with dedicated pages.',
     },
-    generatedAsset: null,
+    generatedAsset: {
+      type: 'blog',
+      title: 'Free Property Appraisal in Dubbo | Raine & Horne',
+      previewText: 'If you\'ve been wondering what your property is worth in today\'s market, getting a professional appraisal is one of the smartest first steps.',
+      approved: false,
+      fullContent: JSON.stringify([
+        { body: "If you've been wondering what your property is worth in today's market, getting a professional appraisal is one of the smartest first steps. Whether you're thinking of selling, renting, refinancing, or simply planning ahead, a local property appraisal gives you a clear understanding of your home's current value. At Raine & Horne Dubbo, we help homeowners across Dubbo and surrounding areas with accurate, obligation-free property appraisals backed by local market knowledge and real buyer demand." },
+        { heading: "Why Get a Property Appraisal?", body: "A professional appraisal can help you:", listItems: ["Understand your home's likely sale price in the current market", "Estimate potential rental returns", "Decide whether now is the right time to sell", "Plan renovations that may increase value", "Compare your property against recent local sales", "Make informed financial decisions"], image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=900&q=80", imageAlt: "Suburban house exterior" },
+        { heading: "Free Property Appraisals in Dubbo", body: "We offer free property appraisals for homeowners throughout Dubbo and nearby communities. Our team assesses factors such as:", listItems: ["Property size and land area", "Location and street appeal", "Number of bedrooms and bathrooms", "Renovations and overall presentation", "Comparable recent sales nearby", "Current market demand in your suburb"], image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=900&q=80", imageAlt: "Property for sale" },
+        { heading: "Areas We Service", body: "We cover all major suburbs and surrounding areas, including:", listItems: ["Central Dubbo", "South Dubbo", "West Dubbo", "East Dubbo", "North Dubbo", "Delroy Park", "Keswick Estate", "Grangewood", "Brocklehurst", "Wongarbon", "Eumungerie and nearby regions"], image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=900&q=80", imageAlt: "Dubbo neighbourhood" },
+        { heading: "Fast Turnaround Times", body: "We understand timing matters. Most property appraisals are completed within 24–48 hours, depending on location and property type." },
+        { heading: "Thinking of Selling?", body: "Many homeowners request an appraisal before deciding whether to list. A professional market estimate can help you understand:", listItems: ["If current market conditions suit your goals", "What buyers may pay today", "How to prepare your home for sale", "Whether small improvements could boost price"] },
+        { heading: "Request Your Free Dubbo Property Appraisal Today", body: "If you'd like to know what your property could be worth, the team at Raine & Horne Dubbo is here to help. Get in touch today to book your free, no-obligation appraisal and receive expert local advice you can trust." }
+      ]),
+    },
     aeoScore: {
       you: 92,
       competitor: 81,
@@ -884,7 +898,21 @@ export const seedRecommendations: Recommendation[] = [
       summary:
         'Prospects with changing expectations look online for clear, local service information. No Dubbo suburb-specific pages exist.',
     },
-    generatedAsset: null,
+    generatedAsset: {
+      type: 'blog',
+      title: 'Dubbo Property Sales & Rentals by Suburb | Raine & Horne',
+      previewText: "If you're thinking of selling, leasing, buying, or renting in Dubbo, working with a local team who understands each suburb can make all the difference.",
+      approved: false,
+      fullContent: JSON.stringify([
+        { body: "If you're thinking of selling, leasing, buying, or renting in Dubbo, working with a local team who understands each suburb can make all the difference. Every part of Dubbo has its own buyer demand, rental trends, property styles, and community appeal. At Raine & Horne Dubbo, we know that property decisions are local. Whether you need help selling your family home, managing an investment property, or finding the right rental, our experienced team is here to guide you." },
+        { heading: "Why Suburb Knowledge Matters", body: "The Dubbo market is not one-size-fits-all. A strategy that works in one suburb may not be the best fit for another. For example:", listItems: ["Family homes in South Dubbo may attract owner-occupiers looking for schools and parks", "Investment properties near the CBD may appeal to professionals seeking convenience", "Larger homes in newer estates may suit growing families"], image: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=900&q=80", imageAlt: "Aerial view of Dubbo suburb" },
+        { heading: "Areas We Service in Dubbo", body: "We assist clients across Dubbo and surrounding areas, including:", listItems: ["South Dubbo — popular with families and owner-occupiers, offering established homes, schools, and convenient amenities", "Central Dubbo / CBD — ideal for buyers seeking lifestyle and convenience", "West Dubbo — a mix of residential living and strong rental appeal", "East Dubbo — known for quality homes, open space, and a strong community feel", "North Dubbo — affordable options with excellent access to major roads and facilities", "Delroy Park — a well-regarded area with golf course surroundings and modern homes", "Keswick Estate — popular with buyers seeking modern builds, larger blocks, and contemporary layouts"], image: "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=900&q=80", imageAlt: "Dubbo residential street" },
+        { heading: "Property Sales in Dubbo Suburbs", body: "If you're selling, we provide:", listItems: ["Accurate suburb-based pricing advice", "Targeted marketing to active buyers", "Professional presentation guidance", "Skilled negotiation to maximise results", "Ongoing support from appraisal to settlement"] },
+        { heading: "Rental & Property Management Services", body: "For landlords and investors, we offer:", listItems: ["Rental appraisals based on local demand", "Quality tenant screening", "Routine inspections and maintenance coordination", "Lease management and communication", "Strategies to maximise rental returns"] },
+        { heading: "Why Choose Raine & Horne Dubbo?", body: "Our strong reputation, trusted local presence, and commitment to personalised service help property owners achieve better outcomes with less stress. We combine recognised brand strength with real local knowledge of the Dubbo market." },
+        { heading: "Looking to Buy, Sell or Rent in Dubbo?", body: "No matter which suburb you're focused on, our team can help you make the right move. Contact Raine & Horne Dubbo today for expert advice, a free appraisal, or support with your next property decision." }
+      ]),
+    },
     aeoScore: {
       you: 88,
       competitor: 79,

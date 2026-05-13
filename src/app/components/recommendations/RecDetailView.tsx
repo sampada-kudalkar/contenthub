@@ -992,7 +992,7 @@ function avatarColor(initial: string): string {
 const MOCK_LLM_ROWS: LLMResponseRow[] = [
   {
     date: 'Jan 10, 2026', location: 'Dubbo, NSW', mentioned: true,
-    position: 1, positionDelta: 1,
+    position: 3, positionDelta: 1,
     mentions: [{ initial: 'Z', color: avatarColor('Z') }, { initial: 'R', color: avatarColor('R') }, { initial: 'T', color: avatarColor('T') }],
     mentionsOverflow: 17,
     citations: [{ initial: 'T', color: avatarColor('T') }, { initial: 'H', color: avatarColor('H') }, { initial: 'L', color: avatarColor('L') }],
@@ -1007,7 +1007,7 @@ const MOCK_LLM_ROWS: LLMResponseRow[] = [
   },
   {
     date: 'Jan 9, 2026', location: 'Bathurst, NSW', mentioned: true,
-    position: 2, positionDelta: 3,
+    position: 5, positionDelta: 3,
     mentions: [{ initial: 'T', color: avatarColor('T') }, { initial: 'H', color: avatarColor('H') }, { initial: 'L', color: avatarColor('L') }],
     mentionsOverflow: 15,
     citations: [{ initial: 'L', color: avatarColor('L') }, { initial: 'C', color: avatarColor('C') }, { initial: 'Z', color: avatarColor('Z') }],
@@ -1015,7 +1015,7 @@ const MOCK_LLM_ROWS: LLMResponseRow[] = [
   },
   {
     date: 'Jan 8, 2026', location: 'Parkes, NSW', mentioned: true,
-    position: 1, positionDelta: 2,
+    position: 4, positionDelta: 2,
     mentions: [{ initial: 'H', color: avatarColor('H') }, { initial: 'L', color: avatarColor('L') }, { initial: 'C', color: avatarColor('C') }],
     mentionsOverflow: 17,
     citations: [{ initial: 'C', color: avatarColor('C') }, { initial: 'Z', color: avatarColor('Z') }],
@@ -1376,7 +1376,7 @@ function LLMResponsesCard({ rec }: { rec: Recommendation }) {
                   <div className="flex items-center gap-1">
                     <span className="text-[13px] text-foreground">{row.position}</span>
                     {row.positionDelta !== null && row.positionDelta > 0 && (
-                      <span className="text-[12px] text-[#43a047] font-medium">+{row.positionDelta}</span>
+                      <span className="text-[12px] text-[#4CAE3D] font-medium">+{row.positionDelta}</span>
                     )}
                   </div>
                 )
