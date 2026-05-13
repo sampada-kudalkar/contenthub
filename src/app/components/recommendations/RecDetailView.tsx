@@ -580,21 +580,19 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
         <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
       </div>
 
-      <div className="flex items-start gap-8 mt-2 mb-2">
-        <div className="flex flex-col gap-1">
-          <p className="text-[32px] font-normal text-foreground leading-none">{current.toFixed(1)}%</p>
-          <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-            <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
-            Current score
-          </span>
-        </div>
-        <div className="flex flex-col gap-1">
-          <p className="text-[32px] font-normal text-foreground leading-none">{compPct.toFixed(1)}%</p>
-          <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-            <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#e53935' }} />
-            Competitor average
-          </span>
-        </div>
+      <div className="relative mt-1" style={{ height: 36 }}>
+        <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: 0 }}>{current.toFixed(1)}%</p>
+        <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: `${compW}%` }}>{compPct.toFixed(1)}%</p>
+      </div>
+      <div className="flex items-center gap-4 mt-2">
+        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <span className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+          Current score
+        </span>
+        <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+          <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#e53935' }} />
+          Competitor average
+        </span>
       </div>
 
       <div className="relative h-1.5 bg-muted rounded-full">
@@ -625,18 +623,20 @@ function BlogPreviewBox({ rec, aeoScore, onOpenClick, onAccept }: BlogPreviewBox
 
   return (
     <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f7fd' }}>
-      <div className="w-[60px] h-[60px] rounded-lg flex-shrink-0 bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center">
-        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white" />
-      </div>
+      <img
+        src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=120&h=120&fit=crop&crop=center&q=80"
+        alt=""
+        className="w-[60px] h-[60px] object-cover rounded-lg flex-shrink-0"
+      />
       <div className="flex flex-1 gap-3 items-start min-w-0">
         <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
           <div className="flex items-center gap-1">
             <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
-            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>Blog generated for you</span>
+            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
           </div>
           <p className="text-[14px] text-foreground leading-[20px] font-normal">{displayTitle}</p>
           {displayBody && (
-            <p className="text-[14px] text-muted-foreground leading-[20px] tracking-[-0.28px]">
+            <p className="text-[12px] text-muted-foreground leading-[18px]">
               {displayBody}{' '}
               {onOpenClick && (
                 <button onClick={onOpenClick} className="text-primary hover:underline font-normal whitespace-nowrap">
@@ -669,17 +669,17 @@ function FAQPreviewBox({ rec, onPreviewClick, onNavigateToContentHub }: FAQPrevi
   return (
     <div className="flex items-start gap-3 rounded-lg p-3" style={{ background: '#f9f5ff' }}>
       <div className="w-[60px] h-[60px] rounded-lg flex-shrink-0 bg-gradient-to-br from-purple-400 to-violet-600 flex items-center justify-center">
-        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white" />
+        <Sparkles size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-white opacity-90" />
       </div>
       <div className="flex flex-1 gap-3 items-start min-w-0">
         <div className="flex-1 min-w-0 flex flex-col gap-0.5 justify-center">
           <div className="flex items-center gap-1">
             <Sparkles size={12} strokeWidth={1.6} absoluteStrokeWidth className="flex-shrink-0" style={{ color: '#6834B7' }} />
-            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>FAQ set generated for you</span>
+            <span className="text-[12px] leading-[18px]" style={{ color: '#6834B7' }}>AI draft ready</span>
           </div>
           <p className="text-[14px] text-foreground leading-[20px] font-normal">{title}</p>
           {preview && (
-            <p className="text-[14px] text-muted-foreground leading-[20px] tracking-[-0.28px]">
+            <p className="text-[12px] text-muted-foreground leading-[18px]">
               {preview}{' '}
               {onPreviewClick && (
                 <button onClick={onPreviewClick} className="text-primary hover:underline font-normal whitespace-nowrap">
@@ -718,7 +718,7 @@ function Stepper({ steps }: { steps: Step[] }) {
             </div>
             <div className={cn('flex flex-col flex-1 min-w-0 pt-0.5', !isLast ? 'pb-5' : 'pb-1')}>
               <p className="text-[14px] text-foreground leading-[22px]">{step.label}</p>
-              <p className="text-[13px] text-muted-foreground leading-[20px] mt-0.5">{step.description}</p>
+              <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">{step.description}</p>
               {step.cta && (
                 <div className="mt-2">
                   <Button variant="outline" size="sm" onClick={step.cta.onClick} className="h-8 text-[13px]">
@@ -778,18 +778,18 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
 
   const steps: Step[] = [
     {
-      label: 'Review your Search AI-generated blog.',
-      description: 'Read through the draft. Change any details, prices, or tone to match your voice.',
+      label: 'Review your Search AI-generated blog',
+      description: 'Read through the draft. Change any details, prices, or tone to match your voice',
       cta: { label: 'Review blog', onClick: () => setShowBlogPreview(true) },
     },
     {
-      label: 'Accept and publish to your website.',
-      description: 'Publish to your website to boost Search AI score.',
+      label: 'Accept and publish to your website',
+      description: 'Publish to your website to boost Search AI score',
       cta: { label: 'Accept and edit blog', onClick: onAccept },
     },
     {
-      label: 'Mark it as complete after publishing.',
-      description: 'Mark this task as complete to observe your progress in Search AI score.',
+      label: 'Mark it as complete after publishing',
+      description: 'Mark this task as complete to observe your progress in Search AI score',
     },
   ]
 
@@ -833,12 +833,14 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
 
       {/* Blog preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-4 pb-2">
-          <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">How can you fix this gap</p>
-          <p className="text-[14px] text-foreground font-normal leading-[22px] mt-2">{rec.title}</p>
+        <div className="px-5 pt-4 pb-1">
+          <div className="flex flex-col gap-3">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
+            <p className="text-[16px] text-primary font-normal leading-[24px]">{rec.title}</p>
+          </div>
         </div>
-        <div className="px-5 pb-4 flex flex-col gap-2">
-          <p className="text-[13px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
+        <div className="px-5 py-3 flex flex-col gap-2">
+          <p className="text-[14px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
           <BlogPreviewBox rec={rec} aeoScore={aeoScore} onOpenClick={() => setShowBlogPreview(true)} onAccept={onNavigateToBlogCanvas ?? onAccept} />
         </div>
       </div>
@@ -847,7 +849,7 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
       <div className="bg-background border border-border rounded-lg">
         <div className="px-5 pt-5 pb-3">
           <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
+          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
         <NeedHelpBanner />
@@ -856,8 +858,8 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
       {/* Competitor section */}
       {topComp && (
         <div className="bg-background border border-border rounded-lg">
-          <div className="px-4 pt-4 pb-2">
-            <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">
+          <div className="px-5 pt-4 pb-2">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">
               What top competitor blog is cited by AI
             </p>
           </div>
@@ -941,12 +943,14 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
 
       {/* FAQ preview card */}
       <div className="bg-background border border-border rounded-lg">
-        <div className="px-5 pt-4 pb-2">
-          <p className="text-[13px] text-muted-foreground font-medium leading-[20px]">How can you fix this gap</p>
-          <p className="text-[14px] text-foreground font-normal leading-[22px] mt-2">{rec.title}</p>
+        <div className="px-5 pt-4 pb-1">
+          <div className="flex flex-col gap-3">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
+            <p className="text-[16px] text-primary font-normal leading-[24px]">{rec.title}</p>
+          </div>
         </div>
-        <div className="px-5 pb-4 flex flex-col gap-2">
-          <p className="text-[13px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
+        <div className="px-5 py-3 flex flex-col gap-2">
+          <p className="text-[14px] text-muted-foreground font-normal leading-[20px]">{rec.description}</p>
           <FAQPreviewBox
             rec={rec}
             onPreviewClick={() => setShowFAQPreview(true)}
@@ -959,7 +963,7 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
       <div className="bg-background border border-border rounded-lg">
         <div className="px-5 pt-5 pb-3">
           <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
-          <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
+          <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
         </div>
         <Stepper steps={steps} />
         <NeedHelpBanner />
@@ -1023,7 +1027,7 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
         <div className="bg-background border border-border rounded-lg">
           <div className="px-5 pt-5 pb-3">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">What to do next</p>
-            <p className="text-[12px] text-muted-foreground leading-[18px] mt-2">Step by step guide on what you need to do next</p>
+            <p className="text-[12px] text-muted-foreground leading-[18px] mt-0.5">Step by step guide on what you need to do next</p>
           </div>
           <Stepper steps={steps} />
           <NeedHelpBanner />
