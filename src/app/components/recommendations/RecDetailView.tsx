@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 import { ArrowLeft, Sparkles, X, Copy, Check, ChevronDown, ChevronUp, CheckCircle2, Info, MoreVertical } from 'lucide-react'
 import { Button } from '@/app/components/ui/button'
+import { Checkbox } from '@/app/components/ui/checkbox'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/app/components/ui/dropdown-menu'
 import { toast } from 'sonner'
 import type { Recommendation, BusinessMetrics, AeoSubScore } from './recTypes'
@@ -1445,17 +1446,130 @@ interface RecDetailViewProps {
   onReject?: (id: string) => void
   onNavigateToContentHub?: (questions: { question: string; answer: string }[]) => void
   onNavigateToBlogCanvas?: () => void
-  /** Callback to mark the recommendation as completed (e.g. after publish) */
   onCompleteRec?: (id: string) => void
-  /** Callback to revert an accepted/completed recommendation back to pending */
   onRevertToPending?: (id: string) => void
 }
 
-export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavigateToContentHub, onNavigateToBlogCanvas, onCompleteRec: _onCompleteRec, onRevertToPending: _onRevertToPending }: RecDetailViewProps) {
+const REJECT_REASONS = [
+  "The recommendation doesn't apply to the business",
+  "Previously accepted a similar recommendation",
+  "The suggestion is unlikely to meaningfully improve performance.",
+  "The recommendation contains errors or could misinform customers.",
+] as const
+
+interface RejectConfirmDialogProps {
+  onCancel: () => void
+  onConfirm: () => void
+}
+
+function RejectConfirmDialog({ onCancel, onConfirm }: RejectConfirmDialogProps) {
+  const [checkedReasons, setCheckedReasons] = useState<Set<string>>(new Set())
+  const [removePermanently, setRemovePermanently] = useState(false)
+
+  const toggleReason = (reason: string) => {
+    setCheckedReasons(prev => {
+      const next = new Set(prev)
+      next.has(reason) ? next.delete(reason) : next.add(reason)
+      return next
+    })
+  }
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center"
+      style={{ backgroundColor: 'rgba(33,33,33,0.64)' }}
+      onClick={onCancel}
+    >
+      <div
+        className="relative bg-background rounded shadow-[0px_4px_8px_0px_rgba(33,33,33,0.18)] flex flex-col overflow-hidden"
+        style={{ width: 616, maxWidth: 'calc(100vw - 48px)' }}
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 pt-6 pb-3">
+          <p className="text-[16px] text-foreground font-normal leading-[24px]">Reject recommendation?</p>
+          <button
+            onClick={onCancel}
+            className="w-6 h-6 flex items-center justify-center rounded hover:bg-muted transition-colors"
+          >
+            <X size={16} strokeWidth={1.6} absoluteStrokeWidth className="text-muted-foreground" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="flex flex-col gap-6 px-6 py-3">
+          {/* Reasons */}
+          <div className="flex flex-col gap-2">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">Tell us what didn't work</p>
+            <div className="flex flex-col gap-2">
+              {REJECT_REASONS.map(reason => (
+                <label key={reason} className="flex items-center gap-1 cursor-pointer">
+                  <Checkbox
+                    checked={checkedReasons.has(reason)}
+                    onCheckedChange={() => toggleReason(reason)}
+                  />
+                  <span className="text-[14px] text-muted-foreground leading-[20px]">{reason}</span>
+                </label>
+              ))}
+            </div>
+          </div>
+
+          {/* Remove permanently */}
+          <div className="flex flex-col gap-2">
+            <p className="text-[14px] text-foreground leading-[20px]">
+              Rejecting this recommendation will hide it from your list for 30 days.
+            </p>
+            <label className="flex items-center gap-1 cursor-pointer">
+              <Checkbox
+                checked={removePermanently}
+                onCheckedChange={v => setRemovePermanently(!!v)}
+              />
+              <span className="text-[12px] text-muted-foreground leading-[18px]">Remove permanently</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-end gap-2 px-6 pt-3 pb-6">
+          <Button variant="ghost" size="sm" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button size="sm" onClick={onConfirm}>
+            Reject
+          </Button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  )
+}
+
+export function RecDetailView({
+  rec, metrics, onBack, onAccept, onReject,
+  onNavigateToContentHub, onNavigateToBlogCanvas,
+  onCompleteRec, onRevertToPending,
+}: RecDetailViewProps) {
   const [activeTab, setActiveTab] = useState<'recommendation' | 'evidence'>('recommendation')
+  const [showRejectDialog, setShowRejectDialog] = useState(false)
+
+  const isBlog = rec.category === 'Content' && !!rec.aeoScore
+  const isFAQ  = rec.category === 'FAQ'
 
   return (
     <div className="flex-1 overflow-y-auto bg-background">
+      {showRejectDialog && (
+        <RejectConfirmDialog
+          onCancel={() => setShowRejectDialog(false)}
+          onConfirm={() => {
+            setShowRejectDialog(false)
+            if (onReject) onReject(rec.id)
+            toast.error('Recommendation rejected', {
+              duration: 5000,
+              icon: <X size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-destructive" />,
+            })
+          }}
+        />
+      )}
       {/* Sticky top block: header + tab bar */}
       <div className="sticky top-0 z-30 bg-background flex-shrink-0">
         {/* Header */}
@@ -1470,14 +1584,56 @@ export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavi
             <p className="text-[18px] text-foreground font-normal truncate">{rec.title}</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            {onReject && (
-              <Button variant="outline" size="sm" onClick={() => onReject(rec.id)}>
-                Reject
+            {rec.status === 'pending' && (
+              <>
+                {onReject && (
+                  <Button variant="outline" size="sm" onClick={() => setShowRejectDialog(true)}>
+                    Reject
+                  </Button>
+                )}
+                <Button size="sm" onClick={() => {
+                  onAccept(rec.id)
+                  toast.success('Recommendation accepted', {
+                    duration: 5000,
+                    icon: <CheckCircle2 size={20} strokeWidth={1.6} className="text-green-600" />,
+                  })
+                }}>
+                  Accept
+                </Button>
+              </>
+            )}
+
+            {rec.status === 'accepted' && (
+              <>
+                {(isBlog || isFAQ) && (
+                  <Button variant="outline" size="sm" onClick={() => {
+                    if (isBlog && onNavigateToBlogCanvas) onNavigateToBlogCanvas()
+                    else if (isFAQ && onNavigateToContentHub) onNavigateToContentHub([])
+                  }}>
+                    {isBlog ? 'Edit blog' : 'Edit FAQs'}
+                  </Button>
+                )}
+                <Button size="sm" onClick={() => {
+                  if (onCompleteRec) {
+                    onCompleteRec(rec.id)
+                    toast.success('Recommendation completed', {
+                      duration: 5000,
+                      icon: <CheckCircle2 size={20} strokeWidth={1.6} className="text-green-600" />,
+                    })
+                  }
+                }}>
+                  Mark as done
+                </Button>
+              </>
+            )}
+
+            {rec.status === 'rejected' && onRevertToPending && (
+              <Button variant="outline" size="sm" onClick={() => onRevertToPending(rec.id)}>
+                Revert to pending
               </Button>
             )}
-            <Button size="sm" onClick={() => onAccept(rec.id)}>
-              Accept
-            </Button>
+
+            {/* Dropdown always visible */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
@@ -1487,7 +1643,11 @@ export function RecDetailView({ rec, metrics, onBack, onAccept, onReject, onNavi
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>Download</DropdownMenuItem>
                 <DropdownMenuItem>Email recommendation</DropdownMenuItem>
-                <DropdownMenuItem>Revert to pending</DropdownMenuItem>
+                {rec.status !== 'pending' && (
+                  <DropdownMenuItem onClick={() => onRevertToPending?.(rec.id)}>
+                    Revert to pending
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
