@@ -148,12 +148,18 @@ interface BlogPreviewModalProps {
   onNavigateToBlogCanvas?: () => void
 }
 
+type DynSection = { heading?: string; body?: string; listItems?: string[]; image?: string; imageAlt?: string }
+
 function BlogPreviewModal({ rec, onClose, onAccept, onNavigateToBlogCanvas }: BlogPreviewModalProps) {
   const aeoScore  = rec.aeoScore?.you ?? 98
   const subScores = rec.aeoScore?.subScores ?? DEFAULT_BLOG_SUBSCORES
   const metaTitle = rec.title
   const metaDesc  = rec.description.slice(0, 155)
   const slug      = rec.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+
+  const dynamicSections: DynSection[] | null = (() => {
+    try { return rec.generatedAsset?.fullContent ? JSON.parse(rec.generatedAsset.fullContent) : null } catch { return null }
+  })()
 
   return createPortal(
     <div
@@ -459,7 +465,7 @@ function FAQPreviewModal({ rec, onClose, onNavigateToContentHub }: FAQPreviewMod
                 onClick={() => {
                   toast.success('Recommendation accepted', {
                     duration: 3000,
-                    icon: <CheckCircle2 size={20} strokeWidth={1.6} className="text-green-600" />,
+                    icon: <CheckCircle2 size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-green-600" />,
                   });
                   onClose();
                   onNavigateToContentHub(faqItems);
@@ -1534,7 +1540,7 @@ function RejectConfirmDialog({ onCancel, onConfirm }: RejectConfirmDialogProps) 
           <Button variant="ghost" size="sm" onClick={onCancel}>
             Cancel
           </Button>
-          <Button size="sm" onClick={onConfirm}>
+          <Button variant="destructive" size="sm" onClick={onConfirm}>
             Reject
           </Button>
         </div>
@@ -1595,7 +1601,7 @@ export function RecDetailView({
                   onAccept(rec.id)
                   toast.success('Recommendation accepted', {
                     duration: 5000,
-                    icon: <CheckCircle2 size={20} strokeWidth={1.6} className="text-green-600" />,
+                    icon: <CheckCircle2 size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-green-600" />,
                   })
                 }}>
                   Accept
@@ -1618,7 +1624,7 @@ export function RecDetailView({
                     onCompleteRec(rec.id)
                     toast.success('Recommendation completed', {
                       duration: 5000,
-                      icon: <CheckCircle2 size={20} strokeWidth={1.6} className="text-green-600" />,
+                      icon: <CheckCircle2 size={20} strokeWidth={1.6} absoluteStrokeWidth className="text-green-600" />,
                     })
                   }
                 }}>
@@ -1643,7 +1649,7 @@ export function RecDetailView({
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>Download</DropdownMenuItem>
                 <DropdownMenuItem>Email recommendation</DropdownMenuItem>
-                {rec.status !== 'pending' && (
+                {(rec.status === 'accepted' || rec.status === 'rejected') && (
                   <DropdownMenuItem onClick={() => onRevertToPending?.(rec.id)}>
                     Revert to pending
                   </DropdownMenuItem>
