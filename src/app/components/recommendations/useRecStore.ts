@@ -20,6 +20,7 @@ export interface RecStoreActions {
   acceptRec: (id: string, assignChoice: AssignChoice, assignedTo?: string) => void
   rejectRec: (id: string) => void
   completeRec: (id: string) => void
+  revertToPending: (id: string) => void
 }
 
 export type RecStore = RecStoreState & RecStoreActions
@@ -66,6 +67,14 @@ export function useRecStore(): RecStore {
     }))
   }, [])
 
+  const revertToPending = useCallback((id: string) => {
+    setRecommendations(recs => recs.map(r =>
+      r.id === id
+        ? { ...r, status: 'pending' as RecStatus, acceptedAt: null, acceptedBy: null, assignChoice: null, assignedTo: null }
+        : r
+    ))
+  }, [])
+
   return {
     recommendations,
     metrics,
@@ -81,5 +90,6 @@ export function useRecStore(): RecStore {
     acceptRec,
     rejectRec,
     completeRec,
+    revertToPending,
   }
 }
