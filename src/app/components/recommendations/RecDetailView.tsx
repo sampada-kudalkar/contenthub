@@ -580,7 +580,7 @@ function ScoreCard({ rec, metrics }: { rec: Recommendation; metrics: BusinessMet
         <p className="text-[12px] text-muted-foreground leading-[18px]">You vs competitor average</p>
       </div>
 
-      <div className="relative mt-1" style={{ height: 36 }}>
+      <div className="relative mt-1" style={{ height: 40 }}>
         <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: 0 }}>{current.toFixed(1)}%</p>
         <p className="absolute text-[28px] font-normal text-foreground leading-none" style={{ left: `${compW}%` }}>{compPct.toFixed(1)}%</p>
       </div>
@@ -834,9 +834,9 @@ function ContentDetail({ rec, metrics, onAccept, onNavigateToBlogCanvas }: Conte
       {/* Blog preview card */}
       <div className="bg-background border border-border rounded-lg">
         <div className="px-5 pt-4 pb-1">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
-            <p className="text-[16px] text-primary font-normal leading-[24px]">{rec.title}</p>
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">{rec.title}</p>
           </div>
         </div>
         <div className="px-5 py-3 flex flex-col gap-2">
@@ -944,9 +944,9 @@ function FAQDetail({ rec, metrics, onNavigateToContentHub }: FAQDetailProps) {
       {/* FAQ preview card */}
       <div className="bg-background border border-border rounded-lg">
         <div className="px-5 pt-4 pb-1">
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
             <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
-            <p className="text-[16px] text-primary font-normal leading-[24px]">{rec.title}</p>
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">{rec.title}</p>
           </div>
         </div>
         <div className="px-5 py-3 flex flex-col gap-2">
@@ -1016,10 +1016,17 @@ function GenericDetail({ rec, metrics }: GenericDetailProps) {
         )}
       </div>
 
-      {/* Overview card */}
-      <div className="bg-background border border-border rounded-lg px-5 pt-4 pb-4">
-        <p className="text-[16px] text-muted-foreground font-normal leading-[24px] tracking-[-0.32px]">{rec.title}</p>
-        <p className="text-[14px] text-foreground font-normal leading-[20px] tracking-[-0.28px] mt-1">{rec.expectedImpact ?? rec.description}</p>
+      {/* How can you fix this gap card */}
+      <div className="bg-background border border-border rounded-lg">
+        <div className="px-5 pt-4 pb-1">
+          <div className="flex flex-col gap-1">
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">How can you fix this gap</p>
+            <p className="text-[16px] text-foreground font-normal leading-[24px]">{rec.title}</p>
+          </div>
+        </div>
+        <div className="px-5 py-3">
+          <p className="text-[14px] text-muted-foreground font-normal leading-[20px]">{rec.expectedImpact ?? rec.description}</p>
+        </div>
       </div>
 
       {/* What to do next */}
